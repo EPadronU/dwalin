@@ -1,0 +1,9 @@
+.allure/
+.idea/
+.settings/
+build/
+target/
+
+.classpath
+.factorypath
+.project

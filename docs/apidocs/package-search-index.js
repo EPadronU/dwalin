@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.github.epadronu.dwalin.core"},{"l":"com.github.epadronu.dwalin.qa"},{"l":"com.github.epadronu.dwalin.utils.junit"},{"l":"com.github.epadronu.dwalin.utils.selenide"}];updateSearchResults();
