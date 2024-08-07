@@ -20,6 +20,7 @@ package com.github.epadronu.dwalin.core;
 
 /* ************************************************************************************************/
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 /* ************************************************************************************************/
 
@@ -40,6 +41,7 @@ public interface NavigablePage extends Page {
    * @return a {@code Supplier<String>} providing the URL.
    */
   @CheckReturnValue
+  @Nonnull
   Supplier<String> urlSupplier();
 
   /**
@@ -48,5 +50,6 @@ public interface NavigablePage extends Page {
    * @return a {@code Runnable} for verification.
    */
   @CheckReturnValue
+  @Nonnull
   Runnable atVerificationSupplier();
 }

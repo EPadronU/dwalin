@@ -25,6 +25,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
 import static com.codeborne.selenide.Selenide.page;
+import static java.util.Objects.requireNonNull;
 /* ************************************************************************************************/
 
 /**
@@ -45,6 +46,20 @@ public sealed interface AbstractionLayer permits Browser, Component, Page {
 
   /**
    * <p>
+   * Error message to be shown when trying to open a page which URL supplier is null.
+   * </p>
+   */
+  String urlSupplierNotNullMessage = "The URL supplier cannot be null";
+
+  /**
+   * <p>
+   * Error message to be shown when trying to open a page which "at verification" is null.
+   * </p>
+   */
+  String atVerificationNotNullMessage = "The at verification cannot be null";
+
+  /**
+   * <p>
    * Navigate to the desired page.
    * </p>
    *
@@ -57,9 +72,9 @@ public sealed interface AbstractionLayer permits Browser, Component, Page {
   default <P extends NavigablePage> P open(final Class<P> pageObjectClass) {
     final P page = page(pageObjectClass);
 
-    Selenide.open(page.urlSupplier().get());
+    Selenide.open(requireNonNull(page.urlSupplier(), urlSupplierNotNullMessage).get());
 
-    page.atVerificationSupplier().run();
+    requireNonNull(page.atVerificationSupplier(), atVerificationNotNullMessage).run();
 
     return page;
   }
@@ -75,12 +90,13 @@ public sealed interface AbstractionLayer permits Browser, Component, Page {
    */
   @CheckReturnValue
   @Nonnull
+  @SuppressWarnings("unchecked")
   default <P extends NavigablePage> P open(final P... reified) {
     final P page = page(reified);
 
-    Selenide.open(page.urlSupplier().get());
+    Selenide.open(requireNonNull(page.urlSupplier(), urlSupplierNotNullMessage).get());
 
-    page.atVerificationSupplier().run();
+    requireNonNull(page.atVerificationSupplier(), atVerificationNotNullMessage).run();
 
     return page;
   }

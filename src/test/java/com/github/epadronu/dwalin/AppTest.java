@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -57,11 +58,13 @@ public final class AppTest extends DwalinWebDriverTest {
 
     private final By searchInput = By.name("q");
 
+    @Nonnull
     @Override
     public Supplier<String> urlSupplier() {
       return () -> "https://google.com";
     }
 
+    @Nonnull
     @Override
     public Runnable atVerificationSupplier() {
       return () -> webdriver().shouldHave(title("Google"));

@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 
 /**
  * <p>
- * Models a web browser within the test automation framework.
+ * Models a web browser within the test automation library.
  * </p>
  */
 public sealed interface Browser extends AbstractionLayer permits BrowserImpl {
