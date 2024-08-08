@@ -19,7 +19,6 @@ package com.github.epadronu.dwalin.core;
 /* ************************************************************************************************/
 
 /* ************************************************************************************************/
-import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 /* ************************************************************************************************/
 
@@ -35,7 +34,6 @@ public sealed interface Browser extends AbstractionLayer permits BrowserImpl {
    *
    * @param context a {@code Consumer<Browser>} representing the navigation context.
    */
-  @Nonnull
   static void navigate(final Consumer<Browser> context) {
     context.accept(new BrowserImpl());
   }

@@ -49,14 +49,14 @@ public sealed interface AbstractionLayer permits Browser, Component, Page {
    * Error message to be shown when trying to open a page which URL supplier is null.
    * </p>
    */
-  String urlSupplierNotNullMessage = "The URL supplier cannot be null";
+  String URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE = "The URL supplier cannot be null";
 
   /**
    * <p>
    * Error message to be shown when trying to open a page which "at verification" is null.
    * </p>
    */
-  String atVerificationNotNullMessage = "The at verification cannot be null";
+  String AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE = "The at verification supplier cannot be null";
 
   /**
    * <p>
@@ -72,9 +72,9 @@ public sealed interface AbstractionLayer permits Browser, Component, Page {
   default <P extends NavigablePage> P open(final Class<P> pageObjectClass) {
     final P page = page(pageObjectClass);
 
-    Selenide.open(requireNonNull(page.urlSupplier(), urlSupplierNotNullMessage).get());
+    Selenide.open(requireNonNull(page.urlSupplier(), URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE).get());
 
-    requireNonNull(page.atVerificationSupplier(), atVerificationNotNullMessage).run();
+    requireNonNull(page.atVerificationSupplier(), AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE).run();
 
     return page;
   }
@@ -94,9 +94,9 @@ public sealed interface AbstractionLayer permits Browser, Component, Page {
   default <P extends NavigablePage> P open(final P... reified) {
     final P page = page(reified);
 
-    Selenide.open(requireNonNull(page.urlSupplier(), urlSupplierNotNullMessage).get());
+    Selenide.open(requireNonNull(page.urlSupplier(), URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE).get());
 
-    requireNonNull(page.atVerificationSupplier(), atVerificationNotNullMessage).run();
+    requireNonNull(page.atVerificationSupplier(), AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE).run();
 
     return page;
   }

@@ -44,24 +44,24 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @Feature("Tests covering the Browser interface's functionality")
 public final class BrowserTests extends DwalinWebDriverTest {
 
-  private static final String pageUrl = "https://searxng.ch/";
+  private static final String PAGE_URL = "https://searxng.ch/";
 
-  private static final String expectedTitle = "SearXNG";
+  private static final String EXPECTED_TITLE = "SearXNG";
 
-  private static final String wrongExpectedTitle = "Wrong title";
+  private static final String WRONG_EXPECTED_TITLE = "Wrong title";
 
   static class SearXNGHomePage implements NavigablePage {
 
     @Nonnull
     @Override
     public Supplier<String> urlSupplier() {
-      return () -> pageUrl;
+      return () -> PAGE_URL;
     }
 
     @Nonnull
     @Override
     public Runnable atVerificationSupplier() {
-      return () -> webdriver().shouldHave(title(expectedTitle));
+      return () -> webdriver().shouldHave(title(EXPECTED_TITLE));
     }
   }
 
@@ -70,7 +70,7 @@ public final class BrowserTests extends DwalinWebDriverTest {
     @Nonnull
     @Override
     public Runnable atVerificationSupplier() {
-      return () -> webdriver().shouldHave(title(wrongExpectedTitle));
+      return () -> webdriver().shouldHave(title(WRONG_EXPECTED_TITLE));
     }
   }
 
@@ -113,11 +113,11 @@ public final class BrowserTests extends DwalinWebDriverTest {
       assertSoftly(softly -> {
         softly.assertThat(getWebDriver().getCurrentUrl())
             .describedAs("The current URL must match the page's")
-            .isEqualTo(pageUrl);
+            .isEqualTo(PAGE_URL);
 
         softly.assertThat(getWebDriver().getTitle())
             .describedAs("The current title must match the one expected by the page")
-            .isEqualTo(expectedTitle);
+            .isEqualTo(EXPECTED_TITLE);
       });
     });
   }
@@ -128,7 +128,7 @@ public final class BrowserTests extends DwalinWebDriverTest {
     Browser.navigate(browser -> {
       assertThatCode(() -> browser.open(WrongSearXNGHomePage.class))
           .describedAs("Navigation should threw an error")
-          .hasMessageContaining("Page should have title " + wrongExpectedTitle)
+          .hasMessageContaining("Page should have title " + WRONG_EXPECTED_TITLE)
           .doesNotThrowAnyExceptionExcept(UIAssertionError.class);
     });
   }
@@ -144,11 +144,11 @@ public final class BrowserTests extends DwalinWebDriverTest {
       assertSoftly(softly -> {
         softly.assertThat(getWebDriver().getCurrentUrl())
             .describedAs("The current URL must match the page's")
-            .isEqualTo(pageUrl);
+            .isEqualTo(PAGE_URL);
 
         softly.assertThat(getWebDriver().getTitle())
             .describedAs("The current title must match the one expected by the page")
-            .isEqualTo(expectedTitle);
+            .isEqualTo(EXPECTED_TITLE);
       });
     });
   }
@@ -159,7 +159,7 @@ public final class BrowserTests extends DwalinWebDriverTest {
     Browser.navigate(browser -> {
       assertThatCode(() -> browser.<WrongSearXNGHomePage>open())
           .describedAs("Navigation should threw an error")
-          .hasMessageContaining("Page should have title " + wrongExpectedTitle)
+          .hasMessageContaining("Page should have title " + WRONG_EXPECTED_TITLE)
           .doesNotThrowAnyExceptionExcept(UIAssertionError.class);
     });
   }
@@ -170,7 +170,7 @@ public final class BrowserTests extends DwalinWebDriverTest {
     Browser.navigate(browser -> {
       assertThatCode(() -> browser.open(NullUrlPage.class))
           .describedAs("Navigation should threw an error")
-          .hasMessage(Browser.urlSupplierNotNullMessage)
+          .hasMessage(Browser.URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE)
           .doesNotThrowAnyExceptionExcept(NullPointerException.class);
     });
   }
@@ -181,7 +181,7 @@ public final class BrowserTests extends DwalinWebDriverTest {
     Browser.navigate(browser -> {
       assertThatCode(() -> browser.<NullTitlePage>open())
           .describedAs("Navigation should threw an error")
-          .hasMessage(Browser.atVerificationNotNullMessage)
+          .hasMessage(Browser.AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE)
           .doesNotThrowAnyExceptionExcept(NullPointerException.class);
     });
   }

@@ -27,6 +27,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.StreamSupport;
+
+import static java.util.Objects.requireNonNull;
 /* ************************************************************************************************/
 
 /**
@@ -39,6 +41,27 @@ import java.util.stream.StreamSupport;
  * </p>
  */
 public non-sealed interface Page extends AbstractionLayer {
+
+  /**
+   * <p>
+   * Error message to be shown when trying to create a component from a null element.
+   * </p>
+   */
+  String ELEMENT_CANNOT_BE_NULL_MESSAGE = "The element cannot be null";
+
+  /**
+   * <p>
+   * Error message to be shown when trying to create a list of components with a null collection of elements.
+   * </p>
+   */
+  String ELEMENT_COLLECTION_CANNOT_BE_NULL_MESSAGE = "The element collection cannot be null";
+
+  /**
+   * <p>
+   * Error message to be shown when trying to create a component with a null factory.
+   * </p>
+   */
+  String COMPONENT_FACTORY_CANNOT_BE_NULL_MESSAGE = "The component factory cannot be null";
 
   /**
    * <p>
@@ -55,6 +78,9 @@ public non-sealed interface Page extends AbstractionLayer {
   @Nonnull
   default <P extends Page, C extends Component<P>> C asComponent(
       final SelenideElement element, final BiFunction<P, SelenideElement, C> componentFactory) {
+    requireNonNull(element, ELEMENT_CANNOT_BE_NULL_MESSAGE);
+    requireNonNull(componentFactory, COMPONENT_FACTORY_CANNOT_BE_NULL_MESSAGE);
+
     return componentFactory.apply((P) this, element);
   }
 
@@ -73,6 +99,9 @@ public non-sealed interface Page extends AbstractionLayer {
   @Nonnull
   default <P extends Page, C extends Component<P>> List<C> asComponents(
       final ElementsCollection elements, final BiFunction<P, SelenideElement, C> componentFactory) {
+    requireNonNull(elements, ELEMENT_COLLECTION_CANNOT_BE_NULL_MESSAGE);
+    requireNonNull(componentFactory, COMPONENT_FACTORY_CANNOT_BE_NULL_MESSAGE);
+
     return StreamSupport.stream(elements.spliterator(), false)
         .map(element -> asComponent(element, componentFactory))
         .toList();

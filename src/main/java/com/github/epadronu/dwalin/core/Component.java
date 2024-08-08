@@ -54,6 +54,8 @@ import java.time.Duration;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.BiFunction;
+
+import static java.util.Objects.requireNonNull;
 /* ************************************************************************************************/
 
 /**
@@ -64,6 +66,20 @@ import java.util.function.BiFunction;
  * @param <P> the type of page this component will be linked to
  */
 public non-sealed abstract class Component<P extends Page> implements AbstractionLayer, SelenideElement {
+
+  /**
+   * <p>
+   * Error message to be shown when trying to create a component with a null page.
+   * </p>
+   */
+  public static final String PAGE_CANNOT_BE_NULL_MESSAGE = "The page cannot be null";
+
+  /**
+   * <p>
+   * Error message to be shown when trying to create a component with a null root element.
+   * </p>
+   */
+  public static final String ROOT_ELEMENT_CANNOT_BE_NULL_MESSAGE = "The root element cannot be null";
 
   private final P page;
 
@@ -78,9 +94,9 @@ public non-sealed abstract class Component<P extends Page> implements Abstractio
    * @param rootElement the element used as the root search in the context of this component
    */
   public Component(final P page, final SelenideElement rootElement) {
-    this.page = page;
+    this.page = requireNonNull(page, PAGE_CANNOT_BE_NULL_MESSAGE);
 
-    this.rootElement = rootElement;
+    this.rootElement = requireNonNull(rootElement, ROOT_ELEMENT_CANNOT_BE_NULL_MESSAGE);
   }
 
   /**

@@ -80,7 +80,7 @@ public final class AppTest extends DwalinWebDriverTest {
     private final By resultEntries = By.xpath("//*[@id='rso']/div");
 
     public List<ResultEntry<GoogleResultPage>> getResultEntries() {
-      return asComponents($$(resultEntries).shouldBe(sizeGreaterThanOrEqual(1)), ResultEntry::new);
+      return asComponents($$(resultEntries).should(sizeGreaterThanOrEqual(1)), ResultEntry::new);
     }
   }
 
