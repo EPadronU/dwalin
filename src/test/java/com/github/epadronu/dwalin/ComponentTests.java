@@ -20,7 +20,7 @@ package com.github.epadronu.dwalin;
 
 /* ************************************************************************************************/
 import com.codeborne.selenide.SelenideElement;
-import com.github.epadronu.dwalin.core.Component;
+import com.github.epadronu.dwalin.core.ElementComponent;
 import com.github.epadronu.dwalin.core.Page;
 import com.github.epadronu.dwalin.qa.DwalinWebDriverTest;
 import io.qameta.allure.Feature;
@@ -45,6 +45,7 @@ import static com.github.epadronu.dwalin.core.Component.ROOT_ELEMENT_CANNOT_BE_N
 import static com.github.epadronu.dwalin.core.Page.COMPONENT_FACTORY_CANNOT_BE_NULL_MESSAGE;
 import static com.github.epadronu.dwalin.core.Page.ELEMENT_CANNOT_BE_NULL_MESSAGE;
 import static com.github.epadronu.dwalin.core.Page.ELEMENT_COLLECTION_CANNOT_BE_NULL_MESSAGE;
+import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 /* ************************************************************************************************/
@@ -65,7 +66,7 @@ public final class ComponentTests extends DwalinWebDriverTest {
     }
   }
 
-  private static final class SearchBox<P extends Page> extends Component<P> {
+  private static final class SearchBox<P extends Page> extends ElementComponent<P> {
 
     private static final By searchInput = By.name("q");
 
@@ -87,7 +88,7 @@ public final class ComponentTests extends DwalinWebDriverTest {
     private static final By resultItem = By.cssSelector("li[data-layout='organic']");
 
     public List<SearchResult<DuckDuckGoSearchResultPage>> results() {
-      return asComponents($$(resultItem).should(sizeGreaterThanOrEqual(1)), SearchResult::new);
+      return asComponents($$(resultItem).should(sizeGreaterThanOrEqual(1), ofSeconds(10L)), SearchResult::new);
     }
 
     public SearchBox<DuckDuckGoHomePage> searchBox() {
@@ -95,7 +96,7 @@ public final class ComponentTests extends DwalinWebDriverTest {
     }
   }
 
-  private static final class SearchResult<P extends Page> extends Component<P> {
+  private static final class SearchResult<P extends Page> extends ElementComponent<P> {
 
     private static final By h2 = By.tagName("h2");
 
