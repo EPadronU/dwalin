@@ -33,32 +33,32 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * <p>
- * Models a web page, being an implementation of a page class under the Page Object Model pattern.
+ * Models a web page, serving as an implementation of a page class following the Page Object Model
+ * pattern.
  * </p>
- *
  * <p>
- * This interface exposed an API for linking pages and components.
+ * This interface provides an API for linking pages and components.
  * </p>
  */
 public non-sealed interface Page extends AbstractionLayer {
 
   /**
    * <p>
-   * Error message to be shown when trying to create a component from a null element.
+   * Error message displayed when attempting to create a component from a null root element.
    * </p>
    */
   String ELEMENT_CANNOT_BE_NULL_MESSAGE = "The element cannot be null";
 
   /**
    * <p>
-   * Error message to be shown when trying to create a list of components with a null collection of elements.
+   * Error message displayed when attempting to create a collection of components from a null collection of elements.
    * </p>
    */
   String ELEMENT_COLLECTION_CANNOT_BE_NULL_MESSAGE = "The element collection cannot be null";
 
   /**
    * <p>
-   * Error message to be shown when trying to create a component with a null factory.
+   * Error message displayed when attempting to create a component with a null factory.
    * </p>
    */
   String COMPONENT_FACTORY_CANNOT_BE_NULL_MESSAGE = "The component factory cannot be null";
@@ -68,32 +68,33 @@ public non-sealed interface Page extends AbstractionLayer {
    * Creates a new component linked to this page.
    * </p>
    *
-   * @param element          the root element for this component
-   * @param componentFactory method capable of creating the new component (usually a constructor)
-   * @param <P>              the type of page the component will be linked to
-   * @param <C>              the type of component to be created
-   * @return a new instant of the desired component
+   * @param element the root element of the component
+   * @param factory a function to create the new component, typically a constructor
+   * @param <P>     the type of page this component will be linked to
+   * @param <C>     the type of component to be created
+   * @return a new instance of the desired component
    */
   @CheckReturnValue
   @Nonnull
+  @SuppressWarnings("unchecked")
   default <P extends Page, C extends Component<P>> C asComponent(
-      final SelenideElement element, final BiFunction<P, SelenideElement, C> componentFactory) {
+      final SelenideElement element, final BiFunction<P, SelenideElement, C> factory) {
     requireNonNull(element, ELEMENT_CANNOT_BE_NULL_MESSAGE);
-    requireNonNull(componentFactory, COMPONENT_FACTORY_CANNOT_BE_NULL_MESSAGE);
+    requireNonNull(factory, COMPONENT_FACTORY_CANNOT_BE_NULL_MESSAGE);
 
-    return componentFactory.apply((P) this, element);
+    return factory.apply((P) this, element);
   }
 
   /**
    * <p>
-   * Creates new components for all elements contained in the collection and that will be linked to this page.
+   * Creates new components for all elements in the specified collection and links them to this page.
    * </p>
    *
-   * @param elements         the elements for which new components will be created
-   * @param componentFactory method capable of creating the new components (usually a constructor)
-   * @param <P>              the type of page the components will be linked to
-   * @param <C>              the type of component to be created
-   * @return an unmodifiable list with the new components
+   * @param elements         the collection of elements for which new components will be created
+   * @param componentFactory a function to create the new component, typically a constructor
+   * @param <P>              the type of page to which the components will be linked
+   * @param <C>              the type of components to be created
+   * @return an unmodifiable list containing the newly created components
    */
   @CheckReturnValue
   @Nonnull

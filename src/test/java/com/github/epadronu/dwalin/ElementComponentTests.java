@@ -50,12 +50,14 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 /* ************************************************************************************************/
 
+/**
+ * Tests validating the functionality of the Page interface as well as the ElementComponent abstract class.
+ */
 @Tag("core")
-@DisplayName("Component's tests")
-@Feature("Tests covering the Component class's functionality")
-public final class ComponentTests extends DwalinWebDriverTest {
+@DisplayName("ElementComponent's tests")
+public final class ElementComponentTests extends DwalinWebDriverTest {
 
-  static final String PAGE_URL = "https://duckduckgo.com/";
+  private static final String PAGE_URL = "https://duckduckgo.com/";
 
   private static final class DuckDuckGoHomePage implements Page {
 
@@ -130,7 +132,7 @@ public final class ComponentTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("happy-path")
-  void interactingWithAPageThroughTheUseOfComponentsShouldWorkAsExpected() {
+  void shouldWorkAsExpectedWhenInteractingWithAPageThroughTheUseOfElementComponents() {
     assertThatCode(() -> open(PAGE_URL, DuckDuckGoHomePage.class)
         .searchBox()
         .search("selenide")
@@ -138,13 +140,13 @@ public final class ComponentTests extends DwalinWebDriverTest {
         .getFirst()
         .title()
         .shouldBe(text("Selenide: concise UI tests in Java")))
-        .describedAs("Interacting through components should work as expected")
+        .describedAs("Component interaction did not behave as expected.")
         .doesNotThrowAnyException();
   }
 
   @Test
   @Tag("happy-path")
-  void usingComponentsAsSelenideElementsShouldWorkAsExpected() {
+  void shouldWorkAsExpectedWhenUsingElementComponentsAsSelenideElements() {
     assertThatCode(() -> {
       open(PAGE_URL, DuckDuckGoHomePage.class)
           .searchBox()
@@ -159,57 +161,57 @@ public final class ComponentTests extends DwalinWebDriverTest {
           .shouldBe(visible)
           .shouldBe(text("Selenide: concise UI tests in Java"));
     })
-        .describedAs("Using components as Selenide's elements should work as expected")
+        .describedAs("Components used as Selenide elements did not function as expected.")
         .doesNotThrowAnyException();
   }
 
   @Test
   @Tag("sad-path")
-  void tryingToCreateAComponentWithANullPageShouldFail() {
+  void shouldFailToCreateAElementComponentWithANullPage() {
     assertThatCode(() -> {
       open(PAGE_URL);
 
       new SearchBox<>(null, $("html"));
     })
-        .describedAs("Trying to create a component with a null page should threw an exception")
+        .describedAs("Creating a component with a null page did not throw the expected exception.")
         .hasMessage(PAGE_CANNOT_BE_NULL_MESSAGE)
         .doesNotThrowAnyExceptionExcept(NullPointerException.class);
   }
 
   @Test
   @Tag("sad-path")
-  void tryingToCreateAComponentWithANullRootElementShouldFail() {
+  void shouldFailToCreateAElementComponentWithANullRootElement() {
     assertThatCode(() -> {
       new SearchBox<>(open(PAGE_URL, DuckDuckGoHomePage.class), null);
     })
-        .describedAs("Trying to create a component with a null root element should threw an exception")
+        .describedAs("Creating a component with a null root element did not throw the expected exception.")
         .hasMessage(ROOT_ELEMENT_CANNOT_BE_NULL_MESSAGE)
         .doesNotThrowAnyExceptionExcept(NullPointerException.class);
   }
 
   @Test
   @Tag("sad-path")
-  void usingNullInTheMethodsAsComponentAndAsComponentsShouldFail() {
+  void shouldFailWhenUsingNullInTheAsComponentAndAsElementComponentsMethodsForElementComponents() {
     final PageWithNullsForComponentTransformation page = page();
 
     assertSoftly(softly -> {
       softly.assertThatCode(() -> page.componentWithNullElement())
-          .describedAs("Using a null element for `asComponent` should threw an exception")
+          .describedAs("Using a null element for `asComponent` did not throw the expected exception")
           .hasMessage(ELEMENT_CANNOT_BE_NULL_MESSAGE)
           .doesNotThrowAnyExceptionExcept(NullPointerException.class);
 
-      softly.assertThatCode(() -> page.componentsWithNullFactory())
-          .describedAs("Using a null component factory for `asComponent` should threw an exception")
+      softly.assertThatCode(() -> page.componentWithNullFactory())
+          .describedAs("Using a null component factory for `asComponent` did not throw the expected exception")
           .hasMessage(COMPONENT_FACTORY_CANNOT_BE_NULL_MESSAGE)
           .doesNotThrowAnyExceptionExcept(NullPointerException.class);
 
       softly.assertThatCode(() -> page.componentsWithNullElementCollection())
-          .describedAs("Using a null element collection for `asComponents` should threw an exception")
+          .describedAs("Using a null element collection for `asComponents` did not throw the expected exception")
           .hasMessage(ELEMENT_COLLECTION_CANNOT_BE_NULL_MESSAGE)
           .doesNotThrowAnyExceptionExcept(NullPointerException.class);
 
       softly.assertThatCode(() -> page.componentsWithNullFactory())
-          .describedAs("Using a null component factory for `asComponents` should threw an exception")
+          .describedAs("Using a null component factory for `asComponents` did not throw the expected exception")
           .hasMessage(COMPONENT_FACTORY_CANNOT_BE_NULL_MESSAGE)
           .doesNotThrowAnyExceptionExcept(NullPointerException.class);
     });

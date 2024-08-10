@@ -23,10 +23,10 @@ import com.codeborne.selenide.ex.UIAssertionError;
 import com.github.epadronu.dwalin.core.Browser;
 import com.github.epadronu.dwalin.core.NavigablePage;
 import com.github.epadronu.dwalin.qa.DwalinWebDriverTest;
-import io.qameta.allure.Feature;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriverException;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
@@ -39,9 +39,11 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 /* ************************************************************************************************/
 
+/**
+ * Tests validating the functionality of the AbstractionLayer, Browser, and NavigablePage interfaces.
+ */
 @Tag("core")
 @DisplayName("Browser's tests")
-@Feature("Tests covering the Browser interface's functionality")
 public final class BrowserTests extends DwalinWebDriverTest {
 
   private static final String PAGE_URL = "https://searxng.ch/";
@@ -50,7 +52,7 @@ public final class BrowserTests extends DwalinWebDriverTest {
 
   private static final String WRONG_EXPECTED_TITLE = "Wrong title";
 
-  static class SearXNGHomePage implements NavigablePage {
+  private static class SearXNGHomePage implements NavigablePage {
 
     @Nonnull
     @Override
@@ -65,7 +67,16 @@ public final class BrowserTests extends DwalinWebDriverTest {
     }
   }
 
-  static final class WrongSearXNGHomePage extends SearXNGHomePage {
+  private static final class WrongUrlPage extends SearXNGHomePage {
+
+    @Nonnull
+    @Override
+    public Supplier<String> urlSupplier() {
+      return () -> "http://bad-url";
+    }
+  }
+
+  private static final class WrongTitlePage extends SearXNGHomePage {
 
     @Nonnull
     @Override
@@ -74,7 +85,7 @@ public final class BrowserTests extends DwalinWebDriverTest {
     }
   }
 
-  static final class NullUrlPage extends SearXNGHomePage {
+  private static final class NullUrlPage extends SearXNGHomePage {
 
     @Nonnull
     @Override
@@ -83,7 +94,7 @@ public final class BrowserTests extends DwalinWebDriverTest {
     }
   }
 
-  static final class NullTitlePage extends SearXNGHomePage {
+  private static final class NullAtVerificationPage extends SearXNGHomePage {
 
     @Nonnull
     @Override
@@ -94,29 +105,29 @@ public final class BrowserTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("happy-path")
-  void theNavigateStaticMethodShouldSucessfullyInjectABrowserInstance() {
+  void shouldInjectABrowserInstanceSuccessfullyWhenTheNavigateStaticMethodIsCalled() {
     Browser.navigate(browser -> {
       assertThat(browser)
-          .describedAs("The browser injected into the navigation context must not be null")
+          .describedAs("Expected a non-null browser instance in the navigation context, but it was null.")
           .isNotNull();
     });
   }
 
   @Test
   @Tag("happy-path")
-  void theOpenMethodWithAClassParameterInheritedFromTheAbstractionLayerInterfaceMustWorkAsExpected() {
+  void shouldWorkAsExpectedWhenTheOpenMethodInheritedFromTheAbstractionLayerInterfaceIsCalledWithAClassParameter() {
     Browser.navigate(browser -> {
       assertThatCode(() -> browser.open(SearXNGHomePage.class))
-          .describedAs("Navigation should be performed as expected with no exceptions being thrown")
+          .describedAs("Navigation did not proceed as expected; no exceptions should have been thrown.")
           .doesNotThrowAnyException();
 
       assertSoftly(softly -> {
         softly.assertThat(getWebDriver().getCurrentUrl())
-            .describedAs("The current URL must match the page's")
+            .describedAs("The current URL does not match the expected page URL.")
             .isEqualTo(PAGE_URL);
 
         softly.assertThat(getWebDriver().getTitle())
-            .describedAs("The current title must match the one expected by the page")
+            .describedAs("The current page title does not match the one expected by the page.")
             .isEqualTo(EXPECTED_TITLE);
       });
     });
@@ -124,10 +135,21 @@ public final class BrowserTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("sad-path")
-  void theOpenMethodWithAClassParameterInheritedFromTheAbstractionLayerInterfaceMustFailWhenTheAtConditionFails() {
+  void shouldFailWhenTheOpenMethodInheritedFromTheAbstractionLayerInterfaceIsCalledWithAClassParameterAndTheUrlIsWrong() {
     Browser.navigate(browser -> {
-      assertThatCode(() -> browser.open(WrongSearXNGHomePage.class))
-          .describedAs("Navigation should threw an error")
+      assertThatCode(() -> browser.open(WrongUrlPage.class))
+          .describedAs("Navigation should have thrown an error.")
+          .hasMessageContaining("unknown error: net::ERR_NAME_NOT_RESOLVED")
+          .doesNotThrowAnyExceptionExcept(WebDriverException.class);
+    });
+  }
+
+  @Test
+  @Tag("sad-path")
+  void shouldFailWhenTheOpenMethodInheritedFromTheAbstractionLayerInterfaceIsCalledWithAClassParameterAndTheAtVerificationFails() {
+    Browser.navigate(browser -> {
+      assertThatCode(() -> browser.open(WrongTitlePage.class))
+          .describedAs("Navigation should have thrown an error.")
           .hasMessageContaining("Page should have title " + WRONG_EXPECTED_TITLE)
           .doesNotThrowAnyExceptionExcept(UIAssertionError.class);
     });
@@ -135,19 +157,19 @@ public final class BrowserTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("happy-path")
-  void theOpenMethodWithAReifiedParameterInheritedFromTheAbstractionLayerInterfaceMustWorkAsExpected() {
+  void shouldWorkAsExpectedWhenTheOpenMethodInheritedFromTheAbstractionLayerInterfaceIsCalledWithAReifiedGeneric() {
     Browser.navigate(browser -> {
       assertThatCode(() -> browser.<SearXNGHomePage>open())
-          .describedAs("Navigation should be performed as expected with no exceptions being thrown")
+          .describedAs("Navigation did not proceed as expected; no exceptions should have been thrown.")
           .doesNotThrowAnyException();
 
       assertSoftly(softly -> {
         softly.assertThat(getWebDriver().getCurrentUrl())
-            .describedAs("The current URL must match the page's")
+            .describedAs("The current URL does not match the expected page URL.")
             .isEqualTo(PAGE_URL);
 
         softly.assertThat(getWebDriver().getTitle())
-            .describedAs("The current title must match the one expected by the page")
+            .describedAs("The current page title does not match the one expected by the page.")
             .isEqualTo(EXPECTED_TITLE);
       });
     });
@@ -155,10 +177,21 @@ public final class BrowserTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("sad-path")
-  void theOpenMethodWithAReifiedParameterInheritedFromTheAbstractionLayerInterfaceMustFailWhenTheAtConditionFails() {
+  void shouldFailWhenTheOpenMethodInheritedFromTheAbstractionLayerInterfaceIsCalledWithAReifiedGenericAndTheUrlIsWrong() {
     Browser.navigate(browser -> {
-      assertThatCode(() -> browser.<WrongSearXNGHomePage>open())
-          .describedAs("Navigation should threw an error")
+      assertThatCode(() -> browser.<WrongUrlPage>open())
+          .describedAs("Navigation should have thrown an error.")
+          .hasMessageContaining("unknown error: net::ERR_NAME_NOT_RESOLVED")
+          .doesNotThrowAnyExceptionExcept(WebDriverException.class);
+    });
+  }
+
+  @Test
+  @Tag("sad-path")
+  void shouldFailWhenTheOpenMethodInheritedFromTheAbstractionLayerInterfaceIsCalledWithAReifiedGenericAndTheAtVerificationFails() {
+    Browser.navigate(browser -> {
+      assertThatCode(() -> browser.<WrongTitlePage>open())
+          .describedAs("Navigation should have thrown an error.")
           .hasMessageContaining("Page should have title " + WRONG_EXPECTED_TITLE)
           .doesNotThrowAnyExceptionExcept(UIAssertionError.class);
     });
@@ -166,10 +199,10 @@ public final class BrowserTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("sad-path")
-  void openingAPageWithANullUrlSupplierMustFail() {
+  void shouldFailWhenAttemptingToOpenAPageWithANullUrlSupplier() {
     Browser.navigate(browser -> {
       assertThatCode(() -> browser.open(NullUrlPage.class))
-          .describedAs("Navigation should threw an error")
+          .describedAs("Navigation should have thrown an error.")
           .hasMessage(Browser.URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE)
           .doesNotThrowAnyExceptionExcept(NullPointerException.class);
     });
@@ -177,10 +210,10 @@ public final class BrowserTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("sad-path")
-  void openingAPageWithANullAtVerificationMustFail() {
+  void shouldFailWhenAttemptingToOpenAPageWithANullAtVerificationSupplier() {
     Browser.navigate(browser -> {
-      assertThatCode(() -> browser.<NullTitlePage>open())
-          .describedAs("Navigation should threw an error")
+      assertThatCode(() -> browser.<NullAtVerificationPage>open())
+          .describedAs("Navigation should have thrown an error.")
           .hasMessage(Browser.AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE)
           .doesNotThrowAnyExceptionExcept(NullPointerException.class);
     });

@@ -30,42 +30,42 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * <p>
- * Serves as the foundation layer for the {@code Browser}, {@code Component}, and
- * {@code Page} types and encapsulates the common API shared among them.
+ * Acts as the foundational layer for the {@code Browser}, {@code Component}, and {@code Page}
+ * types, encapsulating their shared API.
  * </p>
  * <p>
- * Types implementing this interface will inherit the common behavior defined here,
- * providing a consistent structure and interaction model across different components of the library.
+ * Implementing this interface ensures that types inherit the common behavior defined here,
+ * providing a unified structure and interaction model across various components of the library.
  * </p>
  *
  * @see Browser
  * @see Component
  * @see Page
  */
-public sealed interface AbstractionLayer permits Browser, Component, Page {
+sealed interface AbstractionLayer permits Browser, Component, Page {
 
   /**
    * <p>
-   * Error message to be shown when trying to open a page which URL supplier is null.
+   * Error message displayed when attempting to open a page with a null URL supplier.
    * </p>
    */
   String URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE = "The URL supplier cannot be null";
 
   /**
    * <p>
-   * Error message to be shown when trying to open a page which "at verification" is null.
+   * Error message displayed when attempting to open a page with a null "at verification" supplier.
    * </p>
    */
   String AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE = "The at verification supplier cannot be null";
 
   /**
    * <p>
-   * Navigate to the desired page.
+   * Navigates to the specified page.
    * </p>
    *
-   * @param pageObjectClass a {@code Class<P>} providing the type of the page to navigate to
+   * @param pageObjectClass a {@code Class<P>} representing the type of the page to navigate to
    * @param <P>             the type of the page to navigate to
-   * @return a new instance of the page
+   * @return a new instance of the specified page
    */
   @CheckReturnValue
   @Nonnull
@@ -81,12 +81,12 @@ public sealed interface AbstractionLayer permits Browser, Component, Page {
 
   /**
    * <p>
-   * Navigate to the desired page.
+   * Navigates to the specified page.
    * </p>
    *
-   * @param reified a {@code P[]} providing the type of the page to navigate to through a reified generic. Don't pass any values here.
+   * @param reified a {@code P[]} representing the type of the page to navigate to, using a reified generic. No values should be passed here.
    * @param <P>     the type of the page to navigate to
-   * @return a new instance of the page
+   * @return a new instance of the specified page
    */
   @CheckReturnValue
   @Nonnull

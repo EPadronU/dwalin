@@ -24,15 +24,17 @@ import java.util.function.Consumer;
 
 /**
  * <p>
- * Models a web browser within the test automation library.
+ * Models a web browser in the Dwalin test automation library.
  * </p>
  */
 public sealed interface Browser extends AbstractionLayer permits BrowserImpl {
 
   /**
-   * Defines a navigation context for navigating/browsing the web.
+   * <p>
+   * Establishes a web browsing context that incorporates Dwalin features.
+   * </p>
    *
-   * @param context a {@code Consumer<Browser>} representing the navigation context.
+   * @param context a {@code Consumer<Browser>} defining the navigation steps within this context.
    */
   static void navigate(final Consumer<Browser> context) {
     context.accept(new BrowserImpl());
@@ -41,7 +43,7 @@ public sealed interface Browser extends AbstractionLayer permits BrowserImpl {
 
 /**
  * <p>
- * Internal and single implementation of the {@code Browser} interface.
+ * The internal implementation of the {@code Browser} interface.
  * </p>
  *
  * @see Browser

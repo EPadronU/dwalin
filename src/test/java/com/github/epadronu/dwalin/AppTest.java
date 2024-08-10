@@ -21,10 +21,10 @@ package com.github.epadronu.dwalin;
 /* ************************************************************************************************/
 import com.codeborne.selenide.SelenideElement;
 import com.github.epadronu.dwalin.core.Browser;
+import com.github.epadronu.dwalin.core.ElementGuard;
+import com.github.epadronu.dwalin.core.GuardedComponent;
 import com.github.epadronu.dwalin.core.NavigablePage;
 import com.github.epadronu.dwalin.core.Page;
-import com.github.epadronu.dwalin.core.StrictComponent;
-import com.github.epadronu.dwalin.core.StrictFacade;
 import com.github.epadronu.dwalin.qa.DwalinWebDriverTest;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -42,7 +42,7 @@ import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.page;
 import static com.codeborne.selenide.Selenide.webdriver;
 import static com.codeborne.selenide.WebDriverConditions.title;
-import static com.github.epadronu.dwalin.core.StrictFacade.strict;
+import static com.github.epadronu.dwalin.core.ElementGuard.guard;
 /* ************************************************************************************************/
 
 /**
@@ -86,7 +86,7 @@ public final class AppTest extends DwalinWebDriverTest {
     }
   }
 
-  private static class SearchBox<P extends Page> extends StrictComponent<P> {
+  private static class SearchBox<P extends Page> extends GuardedComponent<P> {
 
     SearchBox(final P page, final SelenideElement element) {
       super(page, element);
@@ -99,7 +99,7 @@ public final class AppTest extends DwalinWebDriverTest {
     }
   }
 
-  private static class ResultEntry<P extends Page> extends StrictComponent<P> {
+  private static class ResultEntry<P extends Page> extends GuardedComponent<P> {
 
     private final By title = By.tagName("h3");
 
@@ -107,8 +107,8 @@ public final class AppTest extends DwalinWebDriverTest {
       super(page, element);
     }
 
-    public StrictFacade title() {
-      return strict($(title).shouldBe(visible));
+    public ElementGuard title() {
+      return guard($(title).shouldBe(visible));
     }
   }
 

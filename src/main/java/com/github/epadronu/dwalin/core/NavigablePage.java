@@ -26,28 +26,29 @@ import java.util.function.Supplier;
 
 /**
  * <p>
- * Models a page that can be navigated to by the browser.
+ * Models a web page that can be navigated to within a browser.
  * </p>
- *
  * <p>
- * It provides methods to supply the URL for navigation and a way to verify that the desired page has been reached.
+ * Provides methods to supply the URL for navigation and to verify that the correct page has been reached.
  * </p>
  */
 public interface NavigablePage extends Page {
 
   /**
-   * Supplies the URL that the browser will navigate to.
+   * <p>
+   * Returns a {@code Supplier} that provides the URL for the browser to navigate to.
+   * </p>
    *
-   * @return a {@code Supplier<String>} providing the URL.
+   * @return a {@code Supplier<String>} that provides the URL.
    */
   @CheckReturnValue
   @Nonnull
   Supplier<String> urlSupplier();
 
   /**
-   * Supplies a way to verify that the desired page has been navigated to.
+   * Returns a {@code Runnable} that performs verification to ensure the browser has navigated to the expected page.
    *
-   * @return a {@code Runnable} for verification.
+   * @return a {@code Runnable} for verifying that the correct page has been reached.
    */
   @CheckReturnValue
   @Nonnull

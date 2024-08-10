@@ -47,37 +47,47 @@ import org.openqa.selenium.interactions.Coordinates;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.time.Duration;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringJoiner;
+
+import static com.github.epadronu.dwalin.core.ElementGuard.guard;
 /* ************************************************************************************************/
 
 /**
  * <p>
- * Element-like version of a component that mimics the {@code SelenideElement} behavior.
+ * A specialized version of a component that restricts access to {@code WebElement}
+ * instances and {@code WebElement}-like behavior in the public API of pages.
+ * </p>
+ * <p>
+ * This design ensures that components manage interactions through a controlled facade,
+ * rather than exposing direct {@code WebElement} manipulation.
  * </p>
  *
- * @param <P> the type of page this component will be linked to
- * @see GuardedComponent
- * @see SelenideElement
+ * @param <P> the type of page this component is linked to
+ * @see ElementGuard
+ * @see ElementComponent
  */
-@ParametersAreNonnullByDefault
-public non-sealed abstract class ElementComponent<P extends Page> extends Component<P> implements SelenideElement {
+public non-sealed abstract class GuardedComponent<P extends Page> extends Component<P> {
+
+  private final ElementGuard facade;
 
   /**
    * <p>
-   * Creates a new component linked to the given page and using the provided element as the root search context.
+   * Constructs a new {@code GuardedComponent} associated with the specified page,
+   * using the provided {@code SelenideElement} as the root element for searching.
    * </p>
    *
-   * @param page        the page this component will be linked to
-   * @param rootElement the element used as the root search in the context of this component
+   * @param page        the page to which this component is linked
+   * @param rootElement the root element for this component's search context
    */
-  public ElementComponent(final P page, final SelenideElement rootElement) {
+  public GuardedComponent(final P page, final SelenideElement rootElement) {
     super(page, rootElement);
+
+    this.facade = guard(rootElement);
   }
 
   /**
@@ -88,8 +98,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public SelenideElement $(final String cssSelector) {
+  protected SelenideElement $(final String cssSelector) {
     return rootElement().$(cssSelector);
   }
 
@@ -102,8 +111,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public SelenideElement $(final String cssSelector, final int index) {
+  protected SelenideElement $(final String cssSelector, final int index) {
     return rootElement().$(cssSelector, index);
   }
 
@@ -115,8 +123,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public SelenideElement $(final By selector) {
+  protected SelenideElement $(final By selector) {
     return rootElement().$(selector);
   }
 
@@ -129,8 +136,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public SelenideElement $(final By selector, final int index) {
+  protected SelenideElement $(final By selector, final int index) {
     return rootElement().$(selector, index);
   }
 
@@ -142,8 +148,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public ElementsCollection $$(final String cssSelector) {
+  protected ElementsCollection $$(final String cssSelector) {
     return rootElement().$$(cssSelector);
   }
 
@@ -155,8 +160,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public ElementsCollection $$(final By selector) {
+  protected ElementsCollection $$(final By selector) {
     return rootElement().$$(selector);
   }
 
@@ -168,8 +172,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public SelenideElement $x(final String xpath) {
+  protected SelenideElement $x(final String xpath) {
     return rootElement().$x(xpath);
   }
 
@@ -182,8 +185,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public SelenideElement $x(final String xpath, final int index) {
+  protected SelenideElement $x(final String xpath, final int index) {
     return rootElement().$x(xpath, index);
   }
 
@@ -195,8 +197,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public ElementsCollection $$x(final String xpath) {
+  protected ElementsCollection $$x(final String xpath) {
     return rootElement().$$x(xpath);
   }
 
@@ -208,8 +209,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public SelenideElement ancestor(final String selector) {
+  protected SelenideElement ancestor(final String selector) {
     return rootElement().ancestor(selector);
   }
 
@@ -222,22 +222,20 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public SelenideElement ancestor(final String selector, final int index) {
+  protected SelenideElement ancestor(final String selector, final int index) {
     return rootElement().ancestor(selector, index);
   }
 
   /**
-   * Same as {@link ElementComponent#ancestor(String)}.
+   * Same as {@link GuardedComponent#ancestor(String)}.
    *
    * @param selector CSS selector to locate the ancestor element
    * @return the closest ancestor element that matches the given CSS selector
-   * @see ElementComponent#ancestor(String)
+   * @see GuardedComponent#ancestor(String)
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public SelenideElement closest(final String selector) {
+  protected SelenideElement closest(final String selector) {
     return rootElement().closest(selector);
   }
 
@@ -249,8 +247,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public SelenideElement find(final String cssSelector) {
+  protected SelenideElement find(final String cssSelector) {
     return rootElement().find(cssSelector);
   }
 
@@ -263,8 +260,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public SelenideElement find(final String cssSelector, final int index) {
+  protected SelenideElement find(final String cssSelector, final int index) {
     return rootElement().find(cssSelector, index);
   }
 
@@ -276,8 +272,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public SelenideElement find(final By selector) {
+  protected SelenideElement find(final By selector) {
     return rootElement().find(selector);
   }
 
@@ -290,8 +285,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public SelenideElement find(final By selector, final int index) {
+  protected SelenideElement find(final By selector, final int index) {
     return rootElement().find(selector, index);
   }
 
@@ -303,8 +297,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public ElementsCollection findAll(final String cssSelector) {
+  protected ElementsCollection findAll(final String cssSelector) {
     return rootElement().findAll(cssSelector);
   }
 
@@ -316,8 +309,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
-  public ElementsCollection findAll(final By selector) {
+  protected ElementsCollection findAll(final By selector) {
     return rootElement().findAll(selector);
   }
 
@@ -326,8 +318,9 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return the driver that contains this element.
    */
-  @Override
-  public WebDriver getWrappedDriver() {
+  @Nonnull
+  @CheckReturnValue
+  protected WebDriver getWrappedDriver() {
     return rootElement().getWrappedDriver();
   }
 
@@ -337,10 +330,9 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @return the underlying {@code WebElement}
    * @throws com.codeborne.selenide.ex.ElementNotFound if element does not exist (after waiting for N seconds)
    */
-  @CheckReturnValue
   @Nonnull
-  @Override
-  public WebElement getWrappedElement() {
+  @CheckReturnValue
+  protected WebElement getWrappedElement() {
     return rootElement().getWrappedElement();
   }
 
@@ -350,10 +342,9 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return the last child element of this element
    */
-  @CheckReturnValue
   @Nonnull
-  @Override
-  public SelenideElement lastChild() {
+  @CheckReturnValue
+  protected SelenideElement lastChild() {
     return rootElement().lastChild();
   }
 
@@ -363,10 +354,9 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return the parent element of this element
    */
-  @CheckReturnValue
   @Nonnull
-  @Override
-  public SelenideElement parent() {
+  @CheckReturnValue
+  protected SelenideElement parent() {
     return rootElement().parent();
   }
 
@@ -377,10 +367,9 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @param index the index of sibling element
    * @return the preceding sibling element of this element.
    */
-  @CheckReturnValue
   @Nonnull
-  @Override
-  public SelenideElement preceding(final int index) {
+  @CheckReturnValue
+  protected SelenideElement preceding(final int index) {
     return rootElement().preceding(index);
   }
 
@@ -391,10 +380,9 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @param index the index of sibling element
    * @return the preceding sibling element of this element.
    */
-  @CheckReturnValue
   @Nonnull
-  @Override
-  public SelenideElement sibling(final int index) {
+  @CheckReturnValue
+  protected SelenideElement sibling(final int index) {
     return rootElement().preceding(index);
   }
 
@@ -402,12 +390,11 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * Get the original Selenium {@code WebElement} wrapped by this object.
    *
    * @return the original Selenium {@code WebElement} wrapped by this object
-   * @throws java.util.NoSuchElementException if element does not exist (without waiting for the element)
+   * @throws NoSuchElementException if element does not exist (without waiting for the element)
    */
-  @CheckReturnValue
   @Nonnull
-  @Override
-  public WebElement toWebElement() {
+  @CheckReturnValue
+  protected WebElement toWebElement() {
     return rootElement().toWebElement();
   }
 
@@ -416,10 +403,11 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @param selector the locating mechanism to use
    * @return the first matching element on the current context
-   * @throws java.util.NoSuchElementException if element does not exist (without waiting for the element)
+   * @throws NoSuchElementException if element does not exist (without waiting for the element)
    */
-  @Override
-  public WebElement findElement(final By selector) {
+  @Nonnull
+  @CheckReturnValue
+  protected WebElement findElement(final By selector) {
     return rootElement().findElement(selector);
   }
 
@@ -429,8 +417,9 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @param selector the locating mechanism to use
    * @return a list of all WebElements, or an empty list if nothing matches
    */
-  @Override
-  public List<WebElement> findElements(final By selector) {
+  @Nonnull
+  @CheckReturnValue
+  protected List<WebElement> findElements(final By selector) {
     return rootElement().findElements(selector);
   }
 
@@ -442,9 +431,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement append(final String text) {
-    return rootElement().append(text);
+  public ElementGuard append(final String text) {
+    return facade.append(text);
   }
 
   /**
@@ -455,9 +443,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
-  public SelenideElement as(final String alias) {
-    return rootElement().as(alias);
+  public ElementGuard as(final String alias) {
+    return facade.as(alias);
   }
 
   /**
@@ -469,9 +456,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nullable
-  @Override
   public String attr(final String name) {
-    return rootElement().attr(name);
+    return facade.attr(name);
   }
 
   /**
@@ -482,26 +468,27 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
-  public SelenideElement cached() {
-    return rootElement().cached();
+  public ElementGuard cached() {
+    return facade.cached();
   }
 
   /**
    * Clears the input field.
+   *
+   * @return the current instance of {@link ElementGuard}
    */
   @CanIgnoreReturnValue
-  @Override
-  public void clear() {
-    rootElement().clear();
+  public ElementGuard clear() {
+    return facade.clear();
   }
 
   /**
    * Clicks on the element.
+   *
+   * @return the updated instance of the facade for chaining
    */
-  @Override
-  public void click() {
-    rootElement().click();
+  public ElementGuard click() {
+    return facade.click();
   }
 
   /**
@@ -510,21 +497,19 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @param options the options for the click action.
    * @return the current instance of the facade for method chaining.
    */
-  @Override
-  public SelenideElement click(final ClickOptions options) {
-    return rootElement().click(options);
+  public ElementGuard click(final ClickOptions options) {
+    return facade.click(options);
   }
 
   /**
    * Performs a right-click on the element.
    *
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement contextClick() {
-    return rootElement().contextClick();
+  public ElementGuard contextClick() {
+    return facade.contextClick();
   }
 
   /**
@@ -535,9 +520,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nullable
-  @Override
   public String data(final String name) {
-    return rootElement().data(name);
+    return facade.data(name);
   }
 
   /**
@@ -549,9 +533,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public String describe() {
-    return rootElement().describe();
+    return facade.describe();
   }
 
   /**
@@ -561,22 +544,20 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement doubleClick() {
-    return rootElement().doubleClick();
+  public ElementGuard doubleClick() {
+    return facade.doubleClick();
   }
 
   /**
    * Performs a double click on the element using the specified click options.
    *
    * @param options the click options to use
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement doubleClick(final ClickOptions options) {
-    return rootElement().doubleClick(options);
+  public ElementGuard doubleClick(final ClickOptions options) {
+    return facade.doubleClick(options);
   }
 
   /**
@@ -587,9 +568,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public File download() throws FileNotDownloadedError {
-    return rootElement().download();
+    return facade.download();
   }
 
   /**
@@ -601,9 +581,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public File download(final long timeout) throws FileNotDownloadedError {
-    return rootElement().download(timeout);
+    return facade.download(timeout);
   }
 
   /**
@@ -616,9 +595,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public File download(final long timeout, final FileFilter filter) throws FileNotDownloadedError {
-    return rootElement().download(timeout, filter);
+    return facade.download(timeout, filter);
   }
 
   /**
@@ -630,9 +608,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public File download(final DownloadOptions options) throws FileNotDownloadedError {
-    return rootElement().download(options);
+    return facade.download(options);
   }
 
   /**
@@ -644,22 +621,20 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public File download(final FileFilter filter) throws FileNotDownloadedError {
-    return rootElement().download(filter);
+    return facade.download(filter);
   }
 
   /**
    * Drag and drop this element to the target
    *
    * @param options drag and drop options to define target and which way it will be executed
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @CanIgnoreReturnValue
   @Nonnull
-  @Override
-  public SelenideElement dragAndDrop(final DragAndDropOptions options) {
-    return rootElement().dragAndDrop(options);
+  public ElementGuard dragAndDrop(final DragAndDropOptions options) {
+    return facade.dragAndDrop(options);
   }
 
   /**
@@ -670,9 +645,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @param <ReturnType> the return type of the command
    * @return the result of the command execution
    */
-  @Override
   public <ReturnType> ReturnType execute(final Command<ReturnType> command) {
-    return rootElement().execute(command);
+    return facade.execute(command);
   }
 
   /**
@@ -684,9 +658,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @param <ReturnType> the return type of the command
    * @return the result of the command execution
    */
-  @Override
   public <ReturnType> ReturnType execute(final Command<ReturnType> command, final Duration timeout) {
-    return rootElement().execute(command, timeout);
+    return facade.execute(command, timeout);
   }
 
   /**
@@ -695,23 +668,21 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @return true if the element exists, false otherwise
    */
   @CheckReturnValue
-  @Override
   public boolean exists() {
-    return rootElement().exists();
+    return facade.exists();
   }
 
   /**
-   * Element alias, which can be set with {@link ElementComponent#as(String)}. Usually you should
+   * Element alias, which can be set with {@link GuardedComponent#as(String)}. Usually you should
    * not need this method, unless you are writing a custom reporting engine like Allure Reports.
    *
    * @return the alias name, or {@code null} if not set.
-   * @see ElementComponent#as(String)
+   * @see GuardedComponent#as(String)
    */
   @CheckReturnValue
   @Nullable
-  @Override
   public String getAlias() {
-    return rootElement().getAlias();
+    return facade.getAlias();
   }
 
   /**
@@ -722,9 +693,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nullable
   @CheckReturnValue
-  @Override
   public String getAttribute(final String name) {
-    return rootElement().getAttribute(name);
+    return facade.getAttribute(name);
   }
 
   /**
@@ -735,9 +705,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
   public String getCssValue(final String propertyName) {
-    return rootElement().getCssValue(propertyName);
+    return facade.getCssValue(propertyName);
   }
 
   /**
@@ -747,9 +716,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public ElementsCollection getOptions() {
-    return rootElement().getOptions();
+    return facade.getOptions();
   }
 
   /**
@@ -759,9 +727,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public String getOwnText() {
-    return rootElement().getOwnText();
+    return facade.getOwnText();
   }
 
   /**
@@ -771,22 +738,20 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public String getSearchCriteria() {
-    return rootElement().getSearchCriteria();
+    return facade.getSearchCriteria();
   }
 
   /**
    * Retrieves the selected option from a select field.
    *
-   * @return the selected option as a {@link SelenideElement}
-   * @throws java.util.NoSuchElementException if no option is selected
+   * @return the selected option as a {@link ElementGuard}
+   * @throws NoSuchElementException if no option is selected
    */
   @CheckReturnValue
   @Nonnull
-  @Override
-  public SelenideElement getSelectedOption() throws NoSuchElementException {
-    return rootElement().getSelectedOption();
+  public ElementGuard getSelectedOption() throws NoSuchElementException {
+    return facade.getSelectedOption();
   }
 
   /**
@@ -796,9 +761,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public ElementsCollection getSelectedOptions() {
-    return rootElement().getSelectedOptions();
+    return facade.getSelectedOptions();
   }
 
   /**
@@ -808,9 +772,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nullable
-  @Override
   public String getSelectedOptionText() {
-    return rootElement().getSelectedOptionText();
+    return facade.getSelectedOptionText();
   }
 
   /**
@@ -820,9 +783,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nullable
-  @Override
   public String getSelectedOptionValue() {
-    return rootElement().getSelectedOptionValue();
+    return facade.getSelectedOptionValue();
   }
 
   /**
@@ -832,9 +794,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nullable
-  @Override
   public String getValue() {
-    return rootElement().getValue();
+    return facade.getValue();
   }
 
   /**
@@ -844,9 +805,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public String getText() {
-    return rootElement().getText();
+    return facade.getText();
   }
 
   /**
@@ -856,9 +816,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @return true if the element matches the condition, false otherwise
    */
   @CheckReturnValue
-  @Override
   public boolean has(final WebElementCondition condition) {
-    return rootElement().has(condition);
+    return facade.has(condition);
   }
 
   /**
@@ -870,32 +829,29 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @return true if the element meets the condition within the specified duration, false otherwise
    */
   @CheckReturnValue
-  @Override
   public boolean has(final WebElementCondition condition, final Duration timeout) {
-    return rootElement().has(condition, timeout);
+    return facade.has(condition, timeout);
   }
 
   /**
    * Highlights the element with default options.
    *
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
-  @Override
-  public SelenideElement highlight() {
-    return rootElement().highlight();
+  public ElementGuard highlight() {
+    return facade.highlight();
   }
 
   /**
    * Highlights the element with the specified highlight options.
    *
    * @param options the highlight options to use
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
-  @Override
-  public SelenideElement highlight(final HighlightOptions options) {
-    return rootElement().highlight(options);
+  public ElementGuard highlight(final HighlightOptions options) {
+    return facade.highlight(options);
   }
 
   /**
@@ -905,9 +861,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement hover() {
-    return rootElement().hover();
+  public ElementGuard hover() {
+    return facade.hover();
   }
 
   /**
@@ -918,9 +873,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement hover(final HoverOptions options) {
-    return rootElement().hover(options);
+  public ElementGuard hover(final HoverOptions options) {
+    return facade.hover(options);
   }
 
   /**
@@ -930,9 +884,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public String innerHtml() {
-    return rootElement().innerHtml();
+    return facade.innerHtml();
   }
 
   /**
@@ -942,9 +895,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CheckReturnValue
-  @Override
   public String innerText() {
-    return rootElement().innerText();
+    return facade.innerText();
   }
 
   /**
@@ -953,9 +905,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @param condition the condition to check.
    * @return {@code true} if the condition is met within the timeout, otherwise {@code false}.
    */
-  @Override
   public boolean is(final WebElementCondition condition) {
-    return rootElement().is(condition);
+    return facade.is(condition);
   }
 
   /**
@@ -965,9 +916,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @param timeout   the timeout duration.
    * @return {@code true} if the condition is met within the timeout, otherwise {@code false}.
    */
-  @Override
   public boolean is(final WebElementCondition condition, final Duration timeout) {
-    return rootElement().is(condition, timeout);
+    return facade.is(condition, timeout);
   }
 
   /**
@@ -976,9 +926,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @return true if the element is displayed, false otherwise
    */
   @CheckReturnValue
-  @Override
   public boolean isDisplayed() {
-    return rootElement().isDisplayed();
+    return facade.isDisplayed();
   }
 
   /**
@@ -986,9 +935,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return true if the element is an image and is loaded, false otherwise
    */
-  @Override
   public boolean isImage() {
-    return rootElement().isImage();
+    return facade.isImage();
   }
 
   /**
@@ -998,9 +946,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nullable
-  @Override
   public String name() {
-    return rootElement().name();
+    return facade.name();
   }
 
   /**
@@ -1010,58 +957,53 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement paste() {
-    return rootElement().paste();
+  public ElementGuard paste() {
+    return facade.paste();
   }
 
   /**
    * Simulates pressing the specified key(s) on the keyboard.
    *
    * @param charSequences the key(s) to press
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement press(final CharSequence... charSequences) {
-    return rootElement().press(charSequences);
+  public ElementGuard press(final CharSequence... charSequences) {
+    return facade.press(charSequences);
   }
 
   /**
    * Simulates pressing the ENTER key.
    *
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement pressEnter() {
-    return rootElement().pressEnter();
+  public ElementGuard pressEnter() {
+    return facade.pressEnter();
   }
 
   /**
    * Simulates pressing the ESCAPE key.
    *
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @CanIgnoreReturnValue
   @Nonnull
-  @Override
-  public SelenideElement pressEscape() {
-    return rootElement().pressEscape();
+  public ElementGuard pressEscape() {
+    return facade.pressEscape();
   }
 
   /**
    * Simulates pressing the TAB key.
    *
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @CanIgnoreReturnValue
   @Nonnull
-  @Override
-  public SelenideElement pressTab() {
-    return rootElement().pressTab();
+  public ElementGuard pressTab() {
+    return facade.pressTab();
   }
 
   /**
@@ -1072,9 +1014,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public String pseudo(final String pseudoElementName) {
-    return rootElement().pseudo(pseudoElementName);
+    return facade.pseudo(pseudoElementName);
   }
 
   /**
@@ -1086,9 +1027,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nonnull
-  @Override
   public String pseudo(final String pseudoElementName, final String propertyName) {
-    return rootElement().pseudo(pseudoElementName, propertyName);
+    return facade.pseudo(pseudoElementName, propertyName);
   }
 
   /**
@@ -1098,9 +1038,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nullable
-  @Override
   public File screenshot() {
-    return rootElement().screenshot();
+    return facade.screenshot();
   }
 
   /**
@@ -1111,9 +1050,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement scrollIntoView(final boolean alignToTop) {
-    return rootElement().scrollIntoView(alignToTop);
+  public ElementGuard scrollIntoView(final boolean alignToTop) {
+    return facade.scrollIntoView(alignToTop);
   }
 
   /**
@@ -1123,9 +1061,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nullable
-  @Override
   public BufferedImage screenshotAsImage() {
-    return rootElement().screenshotAsImage();
+    return facade.screenshotAsImage();
   }
 
   /**
@@ -1167,25 +1104,23 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *    {@code element.scrollIntoView("{behavior: \"instant\", block: \"end\", inline: \"nearest\"}");}
    *
    * @param scrollIntoViewOptions the scroll options to use
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement scrollIntoView(final String scrollIntoViewOptions) {
-    return rootElement().scrollIntoView(scrollIntoViewOptions);
+  public ElementGuard scrollIntoView(final String scrollIntoViewOptions) {
+    return facade.scrollIntoView(scrollIntoViewOptions);
   }
 
   /**
    * Scrolls the browser view to the element.
    *
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement scrollTo() {
-    return rootElement().scrollTo();
+  public ElementGuard scrollTo() {
+    return facade.scrollTo();
   }
 
   /**
@@ -1193,20 +1128,20 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @param index        0..N (0 means first option)
    * @param otherIndexes other indexes (if you need to select multiple options)
+   * @return the current instance of {@link ElementGuard}
    */
-  @Override
-  public void selectOption(final int index, final int... otherIndexes) {
-    rootElement().selectOption(index, otherIndexes);
+  public ElementGuard selectOption(final int index, final int... otherIndexes) {
+    return facade.selectOption(index, otherIndexes);
   }
 
   /***
    * Select an option from dropdown list (by text)
    * @param text visible text of option
    * @param otherText other texts (if you need to select multiple options)
+   * @return the current instance of {@link ElementGuard}
    */
-  @Override
-  public void selectOption(final String text, final String... otherText) {
-    rootElement().selectOption(text, otherText);
+  public ElementGuard selectOption(final String text, final String... otherText) {
+    return facade.selectOption(text, otherText);
   }
 
   /**
@@ -1214,10 +1149,10 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @param value       the value of the option to select
    * @param otherValues additional values of options to select
+   * @return the current instance of {@link ElementGuard}
    */
-  @Override
-  public void selectOptionByValue(final String value, final String... otherValues) {
-    rootElement().selectOptionByValue(value, otherValues);
+  public ElementGuard selectOptionByValue(final String value, final String... otherValues) {
+    return facade.selectOptionByValue(value, otherValues);
   }
 
   /**
@@ -1226,36 +1161,34 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @param text       the text to match in the options
    * @param otherTexts additional texts to match in the options
+   * @return the updated instance of the facade for chaining
    */
-  @Override
-  public void selectOptionContainingText(final String text, final String... otherTexts) {
-    rootElement().selectOptionContainingText(text, otherTexts);
+  public ElementGuard selectOptionContainingText(final String text, final String... otherTexts) {
+    return facade.selectOptionContainingText(text, otherTexts);
   }
 
   /**
    * Selects the radio button with the specified value.
    *
    * @param value the value of the radio button to select
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement selectRadio(final String value) {
-    return rootElement().selectRadio(value);
+  public ElementGuard selectRadio(final String value) {
+    return facade.selectRadio(value);
   }
 
   /**
    * Sets the checkbox state to checked or unchecked.
    *
    * @param selected true to check the checkbox, false to uncheck it
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement setSelected(final boolean selected) {
-    return rootElement().setSelected(selected);
+  public ElementGuard setSelected(final boolean selected) {
+    return facade.setSelected(selected);
   }
 
   /**
@@ -1266,9 +1199,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement setValue(final SetValueOptions options) {
-    return rootElement().setValue(options);
+  public ElementGuard setValue(final SetValueOptions options) {
+    return facade.setValue(options);
   }
 
   /**
@@ -1279,22 +1211,20 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement setValue(@Nullable final String text) {
-    return rootElement().setValue(text);
+  public ElementGuard setValue(@Nullable final String text) {
+    return facade.setValue(text);
   }
 
   /**
    * Ensures that the element meets all the specified conditions.
    *
    * @param conditions the conditions that the element should meet
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement should(final WebElementCondition... conditions) {
-    return rootElement().should(conditions);
+  public ElementGuard should(final WebElementCondition... conditions) {
+    return facade.should(conditions);
   }
 
   /**
@@ -1306,22 +1236,20 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement should(final WebElementCondition condition, final Duration timeout) {
-    return rootElement().should(condition, timeout);
+  public ElementGuard should(final WebElementCondition condition, final Duration timeout) {
+    return facade.should(condition, timeout);
   }
 
   /**
    * Ensures that the element meets all the specified conditions.
    *
    * @param conditions the conditions that the element should meet
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement shouldBe(final WebElementCondition... conditions) {
-    return rootElement().shouldBe(conditions);
+  public ElementGuard shouldBe(final WebElementCondition... conditions) {
+    return facade.shouldBe(conditions);
   }
 
   /**
@@ -1329,26 +1257,24 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @param condition the condition that the element should meet
    * @param timeout   the timeout duration
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement shouldBe(final WebElementCondition condition, final Duration timeout) {
-    return rootElement().shouldBe(condition, timeout);
+  public ElementGuard shouldBe(final WebElementCondition condition, final Duration timeout) {
+    return facade.shouldBe(condition, timeout);
   }
 
   /**
    * Ensures that the element meets all the specified conditions.
    *
    * @param conditions the conditions that the element should meet
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement shouldHave(final WebElementCondition... conditions) {
-    return rootElement().shouldHave(conditions);
+  public ElementGuard shouldHave(final WebElementCondition... conditions) {
+    return facade.shouldHave(conditions);
   }
 
   /**
@@ -1361,9 +1287,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement shouldHave(final WebElementCondition condition, final Duration timeout) {
-    return rootElement().shouldHave(condition, timeout);
+  public ElementGuard shouldHave(final WebElementCondition condition, final Duration timeout) {
+    return facade.shouldHave(condition, timeout);
   }
 
   /**
@@ -1375,9 +1300,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement shouldNot(final WebElementCondition... conditions) {
-    return rootElement().shouldNot(conditions);
+  public ElementGuard shouldNot(final WebElementCondition... conditions) {
+    return facade.shouldNot(conditions);
   }
 
   /**
@@ -1385,13 +1309,12 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @param condition the condition that the element should meet
    * @param timeout   the timeout duration
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @CanIgnoreReturnValue
   @Nonnull
-  @Override
-  public SelenideElement shouldNot(final WebElementCondition condition, final Duration timeout) {
-    return rootElement().shouldNot(condition, timeout);
+  public ElementGuard shouldNot(final WebElementCondition condition, final Duration timeout) {
+    return facade.shouldNot(condition, timeout);
   }
 
   /**
@@ -1402,9 +1325,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement shouldNotBe(final WebElementCondition... conditions) {
-    return rootElement().shouldNotBe(conditions);
+  public ElementGuard shouldNotBe(final WebElementCondition... conditions) {
+    return facade.shouldNotBe(conditions);
   }
 
   /**
@@ -1416,22 +1338,20 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement shouldNotBe(final WebElementCondition condition, final Duration timeout) {
-    return rootElement().shouldNotBe(condition, timeout);
+  public ElementGuard shouldNotBe(final WebElementCondition condition, final Duration timeout) {
+    return facade.shouldNotBe(condition, timeout);
   }
 
   /**
    * Ensures that the element does not have the specified conditions.
    *
    * @param conditions the conditions that the element should not have
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @CanIgnoreReturnValue
   @Nonnull
-  @Override
-  public SelenideElement shouldNotHave(final WebElementCondition... conditions) {
-    return rootElement().shouldNotHave(conditions);
+  public ElementGuard shouldNotHave(final WebElementCondition... conditions) {
+    return facade.shouldNotHave(conditions);
   }
 
   /**
@@ -1439,26 +1359,24 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @param condition the condition that the element should not have
    * @param timeout   the timeout duration
-   * @return the current instance of {@link SelenideElement}
+   * @return the current instance of {@link ElementGuard}
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement shouldNotHave(final WebElementCondition condition, final Duration timeout) {
-    return rootElement().shouldNotHave(condition, timeout);
+  public ElementGuard shouldNotHave(final WebElementCondition condition, final Duration timeout) {
+    return facade.shouldNotHave(condition, timeout);
   }
 
   /**
-   * Short form of {@link ElementComponent#getText()}.
+   * Short form of {@link GuardedComponent#getText()}.
    *
    * @return the visible text of the element
-   * @see ElementComponent#getText()
+   * @see GuardedComponent#getText()
    */
   @Nonnull
   @CheckReturnValue
-  @Override
   public String text() {
-    return rootElement().text();
+    return facade.text();
   }
 
   /**
@@ -1470,9 +1388,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement type(final CharSequence text) {
-    return rootElement().type(text);
+  public ElementGuard type(final CharSequence text) {
+    return facade.type(text);
   }
 
   /**
@@ -1483,9 +1400,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement type(final TypeOptions options) {
-    return rootElement().type(options);
+  public ElementGuard type(final TypeOptions options) {
+    return facade.type(options);
   }
 
   /**
@@ -1495,9 +1411,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement unfocus() {
-    return rootElement().unfocus();
+  public ElementGuard unfocus() {
+    return facade.unfocus();
   }
 
   /**
@@ -1508,9 +1423,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
   public File uploadFile(final File... files) {
-    return rootElement().uploadFile(files);
+    return facade.uploadFile(files);
   }
 
   /**
@@ -1523,9 +1437,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
   public File uploadFromClasspath(final String... fileName) {
-    return rootElement().uploadFromClasspath(fileName);
+    return facade.uploadFromClasspath(fileName);
   }
 
   /**
@@ -1535,37 +1448,34 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    */
   @CheckReturnValue
   @Nullable
-  @Override
   public String val() {
-    return rootElement().val();
+    return facade.val();
   }
 
   /**
-   * Same as {@link ElementComponent#setValue(SetValueOptions)}
+   * Same as {@link GuardedComponent#setValue(SetValueOptions)}
    *
    * @param options options for setting the value.
    * @return the current instance of the facade for method chaining.
-   * @see ElementComponent#setValue(SetValueOptions)
+   * @see GuardedComponent#setValue(SetValueOptions)
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement val(final SetValueOptions options) {
-    return rootElement().val(options);
+  public ElementGuard val(final SetValueOptions options) {
+    return facade.val(options);
   }
 
   /**
-   * Same as {@link ElementComponent#setValue(String)}.
+   * Same as {@link GuardedComponent#setValue(String)}.
    *
    * @param text the value to set.
    * @return the current instance of the facade for method chaining.
-   * @see ElementComponent#setValue(String)
+   * @see GuardedComponent#setValue(String)
    */
   @Nonnull
   @CanIgnoreReturnValue
-  @Override
-  public SelenideElement val(@Nullable final String text) {
-    return rootElement().val(text);
+  public ElementGuard val(@Nullable final String text) {
+    return facade.val(text);
   }
 
   /**
@@ -1573,9 +1483,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return the coordinates of an element for advanced interactions.
    */
-  @Override
   public Coordinates getCoordinates() {
-    return rootElement().getCoordinates();
+    return facade.getCoordinates();
   }
 
   /**
@@ -1586,9 +1495,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @return the screenshot in the specified output format
    * @throws WebDriverException if an error occurs while taking the screenshot
    */
-  @Override
   public <X> X getScreenshotAs(final OutputType<X> target) throws WebDriverException {
-    return rootElement().getScreenshotAs(target);
+    return facade.getScreenshotAs(target);
   }
 
   /**
@@ -1596,9 +1504,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return the accessible name of the element.
    */
-  @Override
   public String getAccessibleName() {
-    return rootElement().getAccessibleName();
+    return facade.getAccessibleName();
   }
 
   /**
@@ -1606,9 +1513,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return the WAI-ARIA role of the element.
    */
-  @Override
   public String getAriaRole() {
-    return rootElement().getAriaRole();
+    return facade.getAriaRole();
   }
 
   /**
@@ -1628,9 +1534,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @param name the name of the attribute
    * @return the value of the attribute
    */
-  @Override
   public String getDomAttribute(final String name) {
-    return rootElement().getDomAttribute(name);
+    return facade.getDomAttribute(name);
   }
 
   /**
@@ -1639,9 +1544,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * @param name the name of the property
    * @return the value of the property
    */
-  @Override
   public String getDomProperty(final String name) {
-    return rootElement().getDomProperty(name);
+    return facade.getDomProperty(name);
   }
 
   /**
@@ -1649,9 +1553,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return a {@link Point} representing the location of the element
    */
-  @Override
   public Point getLocation() {
-    return rootElement().getLocation();
+    return facade.getLocation();
   }
 
   /**
@@ -1659,9 +1562,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return the rectangle representing the element's position and size.
    */
-  @Override
   public Rectangle getRect() {
-    return rootElement().getRect();
+    return facade.getRect();
   }
 
   /**
@@ -1669,9 +1571,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return a representation of an element's shadow root for accessing the shadow DOM of a web component.
    */
-  @Override
   public SearchContext getShadowRoot() {
-    return rootElement().getShadowRoot();
+    return facade.getShadowRoot();
   }
 
   /**
@@ -1679,9 +1580,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return the size of the element.
    */
-  @Override
   public Dimension getSize() {
-    return rootElement().getSize();
+    return facade.getSize();
   }
 
   /**
@@ -1689,9 +1589,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return the tag name of the element
    */
-  @Override
   public String getTagName() {
-    return rootElement().getTagName();
+    return facade.getTagName();
   }
 
   /**
@@ -1699,9 +1598,8 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return {@code true} if the element is enabled, otherwise {@code false}.
    */
-  @Override
   public boolean isEnabled() {
-    return rootElement().isEnabled();
+    return facade.isEnabled();
   }
 
   /**
@@ -1709,19 +1607,18 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    *
    * @return {@code true} if the element is selected, otherwise {@code false}.
    */
-  @Override
   public boolean isSelected() {
-    return rootElement().isSelected();
+    return facade.isSelected();
   }
 
   /**
    * Send keystrokes to this element.
    *
    * @param keysToSend the keys to send.
+   * @return the current instance of the facade for method chaining.
    */
-  @Override
-  public void sendKeys(final CharSequence... keysToSend) {
-    rootElement().sendKeys(keysToSend);
+  public ElementGuard sendKeys(final CharSequence... keysToSend) {
+    return facade.sendKeys(keysToSend);
   }
 
   /**
@@ -1729,16 +1626,13 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
    * be submitted to the remote server. If this causes the current page to change, then
    * this method will block until the new page is loaded.
    */
-  @Override
   public void submit() {
-    rootElement().submit();
+    facade.submit();
   }
 
-  @Nonnull
-  @CheckReturnValue
   @Override
   public String toString() {
-    return new StringJoiner(", ", ElementComponent.class.getSimpleName() + "[", "]")
+    return new StringJoiner(", ", GuardedComponent.class.getSimpleName() + "[", "]")
         .add("page=" + linkedPage())
         .add("rootElement=" + rootElement())
         .toString();
