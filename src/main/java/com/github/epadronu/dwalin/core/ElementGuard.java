@@ -38,6 +38,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.interactions.Coordinates;
 
@@ -60,7 +61,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @see SelenideElement
  */
-public final class ElementGuard {
+public final class ElementGuard implements TakesScreenshot {
 
   /**
    * <p>
@@ -1171,6 +1172,7 @@ public final class ElementGuard {
    * @return the screenshot in the specified output format
    * @throws WebDriverException if an error occurs while taking the screenshot
    */
+  @Override
   public <X> X getScreenshotAs(final OutputType<X> target) throws WebDriverException {
     return element.getScreenshotAs(target);
   }
@@ -1312,6 +1314,6 @@ public final class ElementGuard {
   @CheckReturnValue
   @Override
   public String toString() {
-    return element.toString();
+    return element.describe();
   }
 }

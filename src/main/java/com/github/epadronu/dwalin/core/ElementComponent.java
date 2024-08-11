@@ -1738,9 +1738,9 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
   @CheckReturnValue
   @Override
   public String toString() {
-    return new StringJoiner(", ", ElementComponent.class.getSimpleName() + "[", "]")
-        .add("page=" + linkedPage())
-        .add("rootElement=" + rootElement())
+    return new StringJoiner(", ", GuardedComponent.class.getSimpleName() + "[", "]")
+        .add("page=" + linkedPage().getClass().getSimpleName())
+        .add("rootElement=" + rootElement().describe())
         .toString();
   }
 }

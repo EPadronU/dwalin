@@ -39,6 +39,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -71,7 +72,7 @@ import static com.github.epadronu.dwalin.core.ElementGuard.guard;
  * @see ElementGuard
  * @see ElementComponent
  */
-public non-sealed abstract class GuardedComponent<P extends Page> extends Component<P> {
+public non-sealed abstract class GuardedComponent<P extends Page> extends Component<P> implements TakesScreenshot {
 
   private final ElementGuard facade;
 
@@ -1495,6 +1496,7 @@ public non-sealed abstract class GuardedComponent<P extends Page> extends Compon
    * @return the screenshot in the specified output format
    * @throws WebDriverException if an error occurs while taking the screenshot
    */
+  @Override
   public <X> X getScreenshotAs(final OutputType<X> target) throws WebDriverException {
     return facade.getScreenshotAs(target);
   }
@@ -1633,8 +1635,8 @@ public non-sealed abstract class GuardedComponent<P extends Page> extends Compon
   @Override
   public String toString() {
     return new StringJoiner(", ", GuardedComponent.class.getSimpleName() + "[", "]")
-        .add("page=" + linkedPage())
-        .add("rootElement=" + rootElement())
+        .add("page=" + linkedPage().getClass().getSimpleName())
+        .add("rootElement=" + rootElement().describe())
         .toString();
   }
 }

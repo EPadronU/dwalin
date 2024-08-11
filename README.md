@@ -23,7 +23,7 @@ learned from Balin into the Java world.
 
 ## Usage
 
-TODO
+[Sample tests](./src/test/java/com/github/epadronu/dwalin/SampleTests.java)
 
 
 ### Templates
