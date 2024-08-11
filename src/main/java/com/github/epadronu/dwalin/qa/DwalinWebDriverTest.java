@@ -27,18 +27,17 @@ import static com.codeborne.selenide.logevents.SelenideLogger.addListener;
 
 /**
  * <p>
- * Recommended super-class for WebDriver tests based on Dwalin.
+ * A recommended base class for WebDriver tests based on the Dwalin library.
  * </p>
- *
  * <p>
- * For now, it only integrates Allure Framework with Selenide.
+ * This class currently provides integration between the Allure Framework and Selenide.
  * </p>
  */
 public class DwalinWebDriverTest extends DwalinTest {
 
   /**
    * <p>
-   * Creates a new instance of {@code DwalinWebDriverTest}.
+   * Constructs a new {@code DwalinWebDriverTest} instance.
    * </p>
    */
   public DwalinWebDriverTest() {
@@ -46,7 +45,7 @@ public class DwalinWebDriverTest extends DwalinTest {
 
   /**
    * <p>
-   * Integrates Allure Framework with Selenide.
+   * Configures the integration between Allure Framework and Selenide.
    * </p>
    */
   @BeforeAll

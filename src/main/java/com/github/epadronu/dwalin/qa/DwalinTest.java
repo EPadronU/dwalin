@@ -34,11 +34,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <p>
- * Optional super-class for tests based on Dwalin.
+ * Optional base class for tests based on the Dwalin library.
  * </p>
- *
  * <p>
- * For now, it only traces when a test starts/finishes via the logs.
+ * This class primarily logs the start and completion of each test method.
  * </p>
  */
 @DisplayNameGeneration(PascalCaseDisplayNameGenerator.class)
@@ -50,7 +49,7 @@ public class DwalinTest {
 
   /**
    * <p>
-   * Creates a new instance of {@code DwalinTest}.
+   * Constructs a new {@code DwalinTest} instance.
    * </p>
    */
   public DwalinTest() {

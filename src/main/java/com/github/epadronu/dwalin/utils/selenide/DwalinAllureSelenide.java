@@ -19,7 +19,6 @@ package com.github.epadronu.dwalin.utils.selenide;
 /* ************************************************************************************************/
 
 /* ************************************************************************************************/
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.LogEvent;
 import com.codeborne.selenide.logevents.LogEventListener;
@@ -44,12 +43,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
+
+import static com.codeborne.selenide.Selenide.getWebDriverLogs;
+import static java.lang.String.join;
 /* ************************************************************************************************/
 
 /**
  * <p>
- * Based on {@link io.qameta.allure.selenide.AllureSelenide}, this class extends the original functionality by
- * attaching screenshots on successful steps for failed tests.
+ * Extends the functionality of {@link io.qameta.allure.selenide.AllureSelenide} by automatically
+ * attaching screenshots for successful steps in failed tests.
  * </p>
  *
  * @see io.qameta.allure.selenide.AllureSelenide
@@ -71,8 +73,8 @@ public class DwalinAllureSelenide implements LogEventListener {
 
   /**
    * <p>
-   * Create a new {@code DwalinAllureSelenide} instance getting the required {@code AllureLifecycle} invoking
-   * {@code Allure.getLifecycle()}.
+   * Creates a new {@code DwalinAllureSelenide} instance and initializes the {@link AllureLifecycle}
+   * by invoking {@link Allure#getLifecycle()}.
    * </p>
    *
    * @see Allure#getLifecycle()
@@ -83,10 +85,10 @@ public class DwalinAllureSelenide implements LogEventListener {
 
   /**
    * <p>
-   * Create a new {@code DwalinAllureSelenide} instance with the given {@code AllureLifecycle}.
+   * Creates a new {@code DwalinAllureSelenide} instance with the specified {@code AllureLifecycle}.
    * </p>
    *
-   * @param lifecycle Allure's lifecycle to attach to
+   * @param lifecycle the Allure lifecycle to be used for attaching screenshots, logs, and HTML sources
    */
   public DwalinAllureSelenide(final AllureLifecycle lifecycle) {
     this.saveScreenshots = true;
@@ -96,31 +98,79 @@ public class DwalinAllureSelenide implements LogEventListener {
     this.lifecycle = lifecycle;
   }
 
+  /**
+   * <p>
+   * Enables or disables the automatic saving of screenshots for failed tests.
+   * </p>
+   *
+   * @param saveScreenshots whether to save screenshots for failed tests
+   * @return the current instance of {@code DwalinAllureSelenide}
+   */
   public DwalinAllureSelenide screenshots(final boolean saveScreenshots) {
     this.saveScreenshots = saveScreenshots;
     return this;
   }
 
+  /**
+   * <p>
+   * Enables or disables the saving of the page source for failed tests.
+   * </p>
+   *
+   * @param savePageHtml whether to save the page source for failed tests
+   * @return the current instance of {@code DwalinAllureSelenide}
+   */
   public DwalinAllureSelenide savePageSource(final boolean savePageHtml) {
     this.savePageHtml = savePageHtml;
     return this;
   }
 
+  /**
+   * <p>
+   * Configures whether to include Selenide locator steps in the Allure report.
+   * </p>
+   *
+   * @param includeSelenideSteps whether to include Selenide locator steps
+   * @return the current instance of {@code DwalinAllureSelenide}
+   */
   public DwalinAllureSelenide includeSelenideSteps(final boolean includeSelenideSteps) {
     this.includeSelenideLocatorsSteps = includeSelenideSteps;
     return this;
   }
 
+  /**
+   * <p>
+   * Enables logging of browser console logs for the specified log type and level.
+   * </p>
+   *
+   * @param logType  the type of browser logs to save
+   * @param logLevel the level of logs to capture
+   * @return the current instance of {@code DwalinAllureSelenide}
+   */
   public DwalinAllureSelenide enableLogs(final LogType logType, final Level logLevel) {
     this.logTypesToSave.put(logType, logLevel);
     return this;
   }
 
+  /**
+   * <p>
+   * Disables logging of browser console logs for the specified log type.
+   * </p>
+   *
+   * @param logType the type of browser logs to disable
+   * @return the current instance of {@code DwalinAllureSelenide}
+   */
   public DwalinAllureSelenide disableLogs(final LogType logType) {
     this.logTypesToSave.remove(logType);
     return this;
   }
 
+  /**
+   * <p>
+   * Executes actions before a Selenide event, logging the step if required.
+   * </p>
+   *
+   * @param event the event that triggers this action
+   */
   @Override
   public void beforeEvent(final LogEvent event) {
     if (this.stepsShouldBeLogged(event)) {
@@ -132,6 +182,13 @@ public class DwalinAllureSelenide implements LogEventListener {
     }
   }
 
+  /**
+   * <p>
+   * Executes actions after a Selenide event, such as attaching screenshots, page sources, and logs.
+   * </p>
+   *
+   * @param event the event that triggers this action
+   */
   @Override
   public void afterEvent(final LogEvent event) {
     if (event.getStatus().equals(LogEvent.EventStatus.PASS)) {
@@ -186,6 +243,13 @@ public class DwalinAllureSelenide implements LogEventListener {
     }
   }
 
+  /**
+   * <p>
+   * Captures a screenshot as a byte array, if the WebDriver is running.
+   * </p>
+   *
+   * @return an {@code Optional} containing the screenshot bytes, or an empty {@code Optional} if capturing fails
+   */
   private static Optional<byte[]> getScreenshotBytes() {
     try {
       return WebDriverRunner.hasWebDriverStarted()
@@ -198,6 +262,13 @@ public class DwalinAllureSelenide implements LogEventListener {
     }
   }
 
+  /**
+   * <p>
+   * Captures the page source as a byte array, if the WebDriver is running.
+   * </p>
+   *
+   * @return an {@code Optional} containing the page source bytes, or an empty {@code Optional} if capturing fails
+   */
   private static Optional<byte[]> getPageSourceBytes() {
     try {
       return WebDriverRunner.hasWebDriverStarted()
@@ -210,10 +281,27 @@ public class DwalinAllureSelenide implements LogEventListener {
     }
   }
 
+  /**
+   * <p>
+   * Retrieves browser logs as a string for the specified log type and log level.
+   * </p>
+   *
+   * @param logType the type of browser logs to retrieve
+   * @param level   the log level to filter by
+   * @return the filtered browser logs as a string
+   */
   private static String getBrowserLogs(final LogType logType, final Level level) {
-    return String.join("\n\n", Selenide.getWebDriverLogs(logType.toString(), level));
+    return join("\n\n", getWebDriverLogs(logType.toString(), level));
   }
 
+  /**
+   * <p>
+   * Determines whether a Selenide step should be logged.
+   * </p>
+   *
+   * @param event the event to evaluate
+   * @return {@code true} if the step should be logged, otherwise {@code false}
+   */
   private boolean stepsShouldBeLogged(final LogEvent event) {
     return this.includeSelenideLocatorsSteps || !(event instanceof SelenideLog);
   }
