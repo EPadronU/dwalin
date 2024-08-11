@@ -51,7 +51,7 @@ import static java.lang.String.join;
 /**
  * <p>
  * Extends the functionality of {@link io.qameta.allure.selenide.AllureSelenide} by automatically
- * attaching screenshots for successful steps in failed tests.
+ * attaching screenshots for very step (if desired).
  * </p>
  *
  * @see io.qameta.allure.selenide.AllureSelenide
@@ -62,6 +62,8 @@ public class DwalinAllureSelenide implements LogEventListener {
   private static final Logger logger = LogManager.getLogger();
 
   private boolean saveScreenshots;
+
+  private boolean saveScreenshotsForEveryStep;
 
   private boolean savePageHtml;
 
@@ -92,6 +94,7 @@ public class DwalinAllureSelenide implements LogEventListener {
    */
   public DwalinAllureSelenide(final AllureLifecycle lifecycle) {
     this.saveScreenshots = true;
+    this.saveScreenshotsForEveryStep = false;
     this.savePageHtml = true;
     this.includeSelenideLocatorsSteps = true;
     this.logTypesToSave = new EnumMap<>(LogType.class);
@@ -108,6 +111,19 @@ public class DwalinAllureSelenide implements LogEventListener {
    */
   public DwalinAllureSelenide screenshots(final boolean saveScreenshots) {
     this.saveScreenshots = saveScreenshots;
+    return this;
+  }
+
+  /**
+   * <p>
+   * Enables or disables the automatic saving of screenshots for every step.
+   * </p>
+   *
+   * @param saveScreenshotsForEveryStep whether to save screenshots for every step
+   * @return the current instance of {@code DwalinAllureSelenide}
+   */
+  public DwalinAllureSelenide screenshotsForSteps(final boolean saveScreenshotsForEveryStep) {
+    this.saveScreenshotsForEveryStep = saveScreenshotsForEveryStep;
     return this;
   }
 
@@ -191,9 +207,9 @@ public class DwalinAllureSelenide implements LogEventListener {
    */
   @Override
   public void afterEvent(final LogEvent event) {
-    if (event.getStatus().equals(LogEvent.EventStatus.PASS)) {
+    if (!event.getStatus().equals(LogEvent.EventStatus.FAIL)) {
       this.lifecycle.getCurrentTestCaseOrStep().ifPresent((_) -> {
-        if (this.saveScreenshots) {
+        if (this.saveScreenshotsForEveryStep) {
           getScreenshotBytes().ifPresent(bytes -> {
             this.lifecycle.addAttachment("Screenshot", "image/png", "png", bytes);
           });
@@ -228,8 +244,9 @@ public class DwalinAllureSelenide implements LogEventListener {
     if (this.stepsShouldBeLogged(event)) {
       this.lifecycle.getCurrentTestCaseOrStep().ifPresent((_) -> {
         switch (event.getStatus()) {
-          case PASS -> this.lifecycle.updateStep((step) -> {
-            step.setStatus(Status.PASSED);
+          case PASS -> this.lifecycle.updateStep((stepResult) -> {
+            stepResult.setStatus(Status.PASSED);
+            stepResult.setStatusDetails(new StatusDetails());
           });
           case FAIL -> this.lifecycle.updateStep((stepResult) -> {
             stepResult.setStatus(ResultsUtils.getStatus(event.getError()).orElse(Status.BROKEN));

@@ -26,6 +26,7 @@ import org.apache.logging.log4j.message.EntryMessage;
 import org.apache.logging.log4j.message.Message;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.TestInfo;
 
@@ -65,7 +66,8 @@ public class DwalinTest {
    * @see TestInfo
    */
   @BeforeEach
-  protected void beforeEach(final TestInfo testInfo) {
+  @DisplayName("Trace the start of a test method")
+  protected void traceStartTestMethod(final TestInfo testInfo) {
     atomicEntryMessage.set(logger.traceEntry("Running test {}", testInfo.getDisplayName()));
   }
 
@@ -77,7 +79,8 @@ public class DwalinTest {
    * @see Logger#traceExit(EntryMessage)
    */
   @AfterEach
-  protected void afterEach() {
+  @DisplayName("Trace the end of a test method")
+  protected void traceEndTestMethod() {
     logger.traceExit(atomicEntryMessage.get());
   }
 }

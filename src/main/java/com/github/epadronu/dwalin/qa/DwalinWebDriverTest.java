@@ -21,6 +21,7 @@ package com.github.epadronu.dwalin.qa;
 /* ************************************************************************************************/
 import com.github.epadronu.dwalin.utils.selenide.DwalinAllureSelenide;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 
 import static com.codeborne.selenide.logevents.SelenideLogger.addListener;
 /* ************************************************************************************************/
@@ -49,9 +50,11 @@ public class DwalinWebDriverTest extends DwalinTest {
    * </p>
    */
   @BeforeAll
+  @DisplayName("Configure the integration between Allure Framework and Selenide")
   static void setupAllureReports() {
     addListener("AllureSelenide", new DwalinAllureSelenide()
         .screenshots(true)
+        .screenshotsForSteps(true)
         .savePageSource(true));
   }
 }
