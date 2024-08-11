@@ -23,7 +23,6 @@ import com.codeborne.selenide.SelenideElement;
 import com.github.epadronu.dwalin.core.ElementComponent;
 import com.github.epadronu.dwalin.core.Page;
 import com.github.epadronu.dwalin.qa.DwalinWebDriverTest;
-import io.qameta.allure.Feature;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

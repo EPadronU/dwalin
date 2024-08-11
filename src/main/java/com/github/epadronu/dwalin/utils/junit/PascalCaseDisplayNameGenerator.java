@@ -20,7 +20,6 @@ package com.github.epadronu.dwalin.utils.junit;
 /* ************************************************************************************************/
 
 /* ************************************************************************************************/
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.DisplayNameGenerator;
 
 import java.lang.reflect.Method;

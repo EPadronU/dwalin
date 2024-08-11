@@ -20,7 +20,7 @@ package com.github.epadronu.dwalin;
 
 /* ************************************************************************************************/
 import com.codeborne.selenide.SelenideElement;
-import com.github.epadronu.dwalin.core.Browser;
+import com.github.epadronu.dwalin.core.Dwalin;
 import com.github.epadronu.dwalin.core.ElementGuard;
 import com.github.epadronu.dwalin.core.GuardedComponent;
 import com.github.epadronu.dwalin.core.NavigablePage;
@@ -114,29 +114,25 @@ public final class AppTest extends DwalinWebDriverTest {
 
   @Test
   void aBasicSearchShouldSucceed() {
-    Browser.navigate(browser -> {
-      final GoogleHomePage page = browser.open(GoogleHomePage.class);
+    final GoogleHomePage page = Dwalin.navigateTo(GoogleHomePage.class);
 
-      page.searchBox()
-          .search("gitlab epadronu")
-          .getResultEntries()
-          .getFirst()
-          .title()
-          .shouldHave(exactText("Edinson E. Padrón Urdaneta"));
-    });
+    page.searchBox()
+        .search("gitlab epadronu")
+        .getResultEntries()
+        .getFirst()
+        .title()
+        .shouldHave(exactText("Edinson E. Padrón Urdaneta"));
   }
 
   @Test
   void aBasicSearchThatFailsOnPurpose() {
-    Browser.navigate(browser -> {
-      final GoogleHomePage page = browser.open();
+    final GoogleHomePage page = Dwalin.navigateTo();
 
-      page.searchBox()
-          .search("gitlab epadronu")
-          .getResultEntries()
-          .getFirst()
-          .title()
-          .shouldHave(exactText("Edinson Padrón Urdaneta"));
-    });
+    page.searchBox()
+        .search("gitlab epadronu")
+        .getResultEntries()
+        .getFirst()
+        .title()
+        .shouldHave(exactText("Edinson Padrón Urdaneta"));
   }
 }

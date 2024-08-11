@@ -23,14 +23,11 @@ import com.codeborne.selenide.SelenideElement;
 import com.github.epadronu.dwalin.core.GuardedComponent;
 import com.github.epadronu.dwalin.core.Page;
 import com.github.epadronu.dwalin.qa.DwalinWebDriverTest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-
 
 import java.util.List;
 

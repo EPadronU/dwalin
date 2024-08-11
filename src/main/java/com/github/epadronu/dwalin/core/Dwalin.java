@@ -19,24 +19,39 @@ package com.github.epadronu.dwalin.core;
 /* ************************************************************************************************/
 
 /* ************************************************************************************************/
+import com.codeborne.selenide.Selenide;
+
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
+
+import static com.codeborne.selenide.Selenide.page;
+import static java.util.Objects.requireNonNull;
 /* ************************************************************************************************/
 
 /**
  * <p>
- * Acts as the foundational layer for the {@code Component},and {@code Page} types, encapsulating
- * their shared API.
+ * Provides methods for navigating to pages that extends the {@code NavigablePage} interface.
  * </p>
- * <p>
- * Implementing this interface ensures that types inherit the common behavior defined here,
- * providing a unified structure and interaction model across various components of the library.
- * </p>
- *
- * @see Component
- * @see Page
  */
-sealed interface AbstractionLayer permits Component, Page {
+public final class Dwalin {
+
+  /**
+   * <p>
+   * Error message displayed when attempting to open a page with a null URL supplier.
+   * </p>
+   */
+  public static final String URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE = "The URL supplier cannot be null";
+
+  /**
+   * <p>
+   * Error message displayed when attempting to open a page with a null "at verification" supplier.
+   * </p>
+   */
+  public static final String AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE = "The at verification supplier cannot be null";
+
+  private Dwalin() {
+
+  }
 
   /**
    * <p>
@@ -49,8 +64,14 @@ sealed interface AbstractionLayer permits Component, Page {
    */
   @CheckReturnValue
   @Nonnull
-  default <P extends NavigablePage> P navigateTo(final Class<P> pageObjectClass) {
-    return Dwalin.navigateTo(pageObjectClass);
+  public static <P extends NavigablePage> P navigateTo(final Class<P> pageObjectClass) {
+    final P page = page(pageObjectClass);
+
+    Selenide.open(requireNonNull(page.urlSupplier(), URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE).get());
+
+    requireNonNull(page.atVerificationSupplier(), AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE).run();
+
+    return page;
   }
 
   /**
@@ -65,7 +86,13 @@ sealed interface AbstractionLayer permits Component, Page {
   @CheckReturnValue
   @Nonnull
   @SuppressWarnings("unchecked")
-  default <P extends NavigablePage> P navigateTo(final P... reified) {
-    return Dwalin.navigateTo(reified);
+  public static <P extends NavigablePage> P navigateTo(final P... reified) {
+    final P page = page(reified);
+
+    Selenide.open(requireNonNull(page.urlSupplier(), URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE).get());
+
+    requireNonNull(page.atVerificationSupplier(), AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE).run();
+
+    return page;
   }
 }
