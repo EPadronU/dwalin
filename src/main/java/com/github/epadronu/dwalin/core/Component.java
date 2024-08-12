@@ -33,19 +33,21 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * <p>
- * Models a reusable interface component that can appear multiple times across one or more pages.
+ * Models a reusable interface component that can appear multiple times across one or more pages or components.
  * </p>
  *
- * @param <P> the type of page to which this component is associated
+ * @param <P> the type of parent to which this component is associated
  */
-public sealed abstract class Component<P extends Page> implements AbstractionLayer permits GuardedComponent, ElementComponent {
+public sealed abstract class Component<P extends AbstractionLayer>
+    implements AbstractionLayer
+    permits GuardedComponent, ElementComponent {
 
   /**
    * <p>
-   * Error message displayed when attempting to create a component with a null page.
+   * Error message displayed when attempting to create a component with a null parent.
    * </p>
    */
-  public static final String PAGE_CANNOT_BE_NULL_MESSAGE = "The page cannot be null";
+  public static final String PARENT_CANNOT_BE_NULL_MESSAGE = "The parent cannot be null";
 
   /**
    * <p>
@@ -54,23 +56,39 @@ public sealed abstract class Component<P extends Page> implements AbstractionLay
    */
   public static final String ROOT_ELEMENT_CANNOT_BE_NULL_MESSAGE = "The root element cannot be null";
 
-  private final P page;
+  private final P parent;
 
   private final SelenideElement rootElement;
 
   /**
    * <p>
-   * Constructs a new component linked to the specified page, using the provided element as the root search context.
+   * Constructs a new component linked to the specified parent, using the provided element as the root search context.
    * </p>
    *
-   * @param page        the page to which this component is associated
+   * @param parent      the parent to which this component is associated
    * @param rootElement the element used as the root search context for this component
-   * @throws NullPointerException if {@code page} or {@code rootElement} is {@code null}
+   * @throws NullPointerException if {@code parent} or {@code rootElement} is {@code null}
    */
-  public Component(final P page, final SelenideElement rootElement) {
-    this.page = requireNonNull(page, PAGE_CANNOT_BE_NULL_MESSAGE);
+  public Component(final P parent, final SelenideElement rootElement) {
+    this.parent = requireNonNull(parent, PARENT_CANNOT_BE_NULL_MESSAGE);
 
     this.rootElement = requireNonNull(rootElement, ROOT_ELEMENT_CANNOT_BE_NULL_MESSAGE);
+  }
+
+  /**
+   * <p>
+   * Retrieves the parent to which this component is associated.
+   * </p>
+   * <p>
+   * It's like ascending in the composition tree.
+   * </p>
+   *
+   * @return the parent associated with this component
+   */
+  @CheckReturnValue
+  @Nonnull
+  public P ascend() {
+    return parent;
   }
 
   /**
@@ -88,56 +106,46 @@ public sealed abstract class Component<P extends Page> implements AbstractionLay
 
   /**
    * <p>
-   * Retrieves the page to which this component is associated.
-   * </p>
-   *
-   * @return the page associated with this component
-   */
-  @CheckReturnValue
-  @Nonnull
-  public P linkedPage() {
-    return page;
-  }
-
-  /**
-   * <p>
-   * Creates a new component linked to the same page as this component.
+   * Creates a new nested component associated with this components as its parent.
    * </p>
    *
    * @param element the root element for the new component
    * @param factory a function to create the new component, typically a constructor
+   * @param <Self>  the type of this component
    * @param <C>     the type of component to be created
    * @return a new instance of the specified component type
    */
   @CheckReturnValue
   @Nonnull
-  public <C extends Component<P>> C asComponent(
-      final SelenideElement element, final BiFunction<P, SelenideElement, C> factory) {
-    return page.asComponent(element, factory);
+  public <Self extends Component<P>, C extends Component<Self>> C asNestedComponent(
+      final SelenideElement element, final BiFunction<Self, SelenideElement, C> factory) {
+    return asComponent(element, factory);
   }
 
   /**
    * <p>
-   * Creates new components for each element in the provided collection, all linked to the same page as this component.
+   * Creates new nested components for each element in the provided collection, all associated with this
+   * components as their parent.
    * </p>
    *
    * @param elements a collection of elements for which new components will be created
    * @param factory  a function to create the new components, typically a constructor
+   * @param <Self>   the type of this component
    * @param <C>      the type of component to be created
    * @return an unmodifiable list containing the newly created components
    */
   @CheckReturnValue
   @Nonnull
-  public <C extends Component<P>> List<C> asComponents(
-      final ElementsCollection elements, final BiFunction<P, SelenideElement, C> factory) {
-    return page.asComponents(elements, factory);
+  public <Self extends Component<P>, C extends Component<Self>> List<C> asNestedComponents(
+      final ElementsCollection elements, final BiFunction<Self, SelenideElement, C> factory) {
+    return asComponents(elements, factory);
   }
 
   @Override
   public String toString() {
     return new StringJoiner(", ", Component.class.getSimpleName() + "[", "]")
-        .add("page=" + page)
-        .add("rootElement=" + rootElement)
+        .add("parent=" + parent.getClass().getSimpleName())
+        .add("rootElement=" + rootElement.describe())
         .toString();
   }
 }

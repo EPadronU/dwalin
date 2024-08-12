@@ -39,11 +39,11 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.Selenide.page;
-import static com.github.epadronu.dwalin.core.Component.PAGE_CANNOT_BE_NULL_MESSAGE;
+import static com.github.epadronu.dwalin.core.AbstractionLayer.COMPONENT_FACTORY_CANNOT_BE_NULL_MESSAGE;
+import static com.github.epadronu.dwalin.core.AbstractionLayer.ELEMENT_CANNOT_BE_NULL_MESSAGE;
+import static com.github.epadronu.dwalin.core.AbstractionLayer.ELEMENT_COLLECTION_CANNOT_BE_NULL_MESSAGE;
+import static com.github.epadronu.dwalin.core.Component.PARENT_CANNOT_BE_NULL_MESSAGE;
 import static com.github.epadronu.dwalin.core.Component.ROOT_ELEMENT_CANNOT_BE_NULL_MESSAGE;
-import static com.github.epadronu.dwalin.core.Page.COMPONENT_FACTORY_CANNOT_BE_NULL_MESSAGE;
-import static com.github.epadronu.dwalin.core.Page.ELEMENT_CANNOT_BE_NULL_MESSAGE;
-import static com.github.epadronu.dwalin.core.Page.ELEMENT_COLLECTION_CANNOT_BE_NULL_MESSAGE;
 import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -152,7 +152,7 @@ public final class GuardedComponentTests extends DwalinWebDriverTest {
       new SearchBox<>(null, $("html"));
     })
         .describedAs("Creating a component with a null page did not throw the expected exception.")
-        .hasMessage(PAGE_CANNOT_BE_NULL_MESSAGE)
+        .hasMessage(PARENT_CANNOT_BE_NULL_MESSAGE)
         .doesNotThrowAnyExceptionExcept(NullPointerException.class);
   }
 

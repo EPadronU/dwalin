@@ -198,19 +198,19 @@ public final class SampleTests extends DwalinWebDriverTest {
     /**
      * Retrieves the site links associated with the search result.
      *
-     * @return a list of {@code SiteLink<P>} representing the site links
+     * @return a list of {@code SiteLink} representing the site links
      */
-    public List<SiteLink<P>> siteLinks() {
-      return asComponents($$(siteLinks).shouldHave(sizeGreaterThanOrEqual(6)), SiteLink::new);
+    public List<SiteLink<SearchResult<P>>> siteLinks() {
+      return asNestedComponents($$(siteLinks).shouldHave(sizeGreaterThanOrEqual(6)), SiteLink::new);
     }
   }
 
   /**
    * Represents a site link associated with a search result.
    *
-   * @param <P> the type of the parent page
+   * @param <P> the type of the parent
    */
-  private static final class SiteLink<P extends Page> extends GuardedComponent<P> {
+  private static final class SiteLink<P extends SearchResult<?>> extends GuardedComponent<P> {
 
     private static final By title = By.tagName("h3");
 
@@ -219,11 +219,11 @@ public final class SampleTests extends DwalinWebDriverTest {
     /**
      * Constructs a {@code SiteLink} component.
      *
-     * @param page        the parent page containing this component
+     * @param parent      the parent containing this component
      * @param rootElement the root element of the site link
      */
-    public SiteLink(P page, SelenideElement rootElement) {
-      super(page, rootElement);
+    public SiteLink(P parent, SelenideElement rootElement) {
+      super(parent, rootElement);
     }
 
     /**
@@ -265,7 +265,7 @@ public final class SampleTests extends DwalinWebDriverTest {
           .describedAs("No enough site links were found for the first result.")
           .hasSizeGreaterThan(4);
 
-      final SiteLink<DuckDuckGoSearchResultPage> siteLink = firstResult.siteLinks().get(3);
+      final SiteLink<?> siteLink = firstResult.siteLinks().get(3);
 
       softly.assertThat(siteLink.title().text())
           .describedAs("The text of the 4th site link in the first result did not match the expected value.")
@@ -301,7 +301,7 @@ public final class SampleTests extends DwalinWebDriverTest {
           .describedAs("No enough site links were found for the first result.")
           .hasSizeGreaterThan(3);
 
-      final SiteLink<DuckDuckGoSearchResultPage> siteLink = firstResult.siteLinks().get(2);
+      final SiteLink<?> siteLink = firstResult.siteLinks().get(2);
 
       softly.assertThat(siteLink.title().text())
           .describedAs("The text of the 3rd site link in the first result did not match the expected value.")

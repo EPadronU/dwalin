@@ -61,23 +61,25 @@ import java.util.StringJoiner;
  * Element-like version of a component that mimics the {@code SelenideElement} behavior.
  * </p>
  *
- * @param <P> the type of page this component will be linked to
+ * @param <P> the type of parent this component will be associated with
  * @see GuardedComponent
  * @see SelenideElement
  */
 @ParametersAreNonnullByDefault
-public non-sealed abstract class ElementComponent<P extends Page> extends Component<P> implements SelenideElement {
+public non-sealed abstract class ElementComponent<P extends AbstractionLayer>
+    extends Component<P>
+    implements SelenideElement {
 
   /**
    * <p>
-   * Creates a new component linked to the given page and using the provided element as the root search context.
+   * Creates a new component associated with the given parent and using the provided element as the root search context.
    * </p>
    *
-   * @param page        the page this component will be linked to
+   * @param parent      the parent this component will be associated with
    * @param rootElement the element used as the root search in the context of this component
    */
-  public ElementComponent(final P page, final SelenideElement rootElement) {
-    super(page, rootElement);
+  public ElementComponent(final P parent, final SelenideElement rootElement) {
+    super(parent, rootElement);
   }
 
   /**
@@ -1739,7 +1741,7 @@ public non-sealed abstract class ElementComponent<P extends Page> extends Compon
   @Override
   public String toString() {
     return new StringJoiner(", ", GuardedComponent.class.getSimpleName() + "[", "]")
-        .add("page=" + linkedPage().getClass().getSimpleName())
+        .add("parent=" + ascend().getClass().getSimpleName())
         .add("rootElement=" + rootElement().describe())
         .toString();
   }

@@ -68,25 +68,27 @@ import static com.github.epadronu.dwalin.core.ElementGuard.guard;
  * rather than exposing direct {@code WebElement} manipulation.
  * </p>
  *
- * @param <P> the type of page this component is linked to
+ * @param <P> the type of parent this component is associated with
  * @see ElementGuard
  * @see ElementComponent
  */
-public non-sealed abstract class GuardedComponent<P extends Page> extends Component<P> implements TakesScreenshot {
+public non-sealed abstract class GuardedComponent<P extends AbstractionLayer>
+    extends Component<P>
+    implements TakesScreenshot {
 
   private final ElementGuard facade;
 
   /**
    * <p>
-   * Constructs a new {@code GuardedComponent} associated with the specified page,
+   * Constructs a new {@code GuardedComponent} associated with the specified parent,
    * using the provided {@code SelenideElement} as the root element for searching.
    * </p>
    *
-   * @param page        the page to which this component is linked
+   * @param parent      the parent to which this component is associated
    * @param rootElement the root element for this component's search context
    */
-  public GuardedComponent(final P page, final SelenideElement rootElement) {
-    super(page, rootElement);
+  public GuardedComponent(final P parent, final SelenideElement rootElement) {
+    super(parent, rootElement);
 
     this.facade = guard(rootElement);
   }
@@ -1635,7 +1637,7 @@ public non-sealed abstract class GuardedComponent<P extends Page> extends Compon
   @Override
   public String toString() {
     return new StringJoiner(", ", GuardedComponent.class.getSimpleName() + "[", "]")
-        .add("page=" + linkedPage().getClass().getSimpleName())
+        .add("parent=" + ascend().getClass().getSimpleName())
         .add("rootElement=" + rootElement().describe())
         .toString();
   }
