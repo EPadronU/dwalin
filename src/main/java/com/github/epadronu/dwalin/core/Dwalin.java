@@ -20,12 +20,18 @@ package com.github.epadronu.dwalin.core;
 
 /* ************************************************************************************************/
 import com.codeborne.selenide.Selenide;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriverException;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
 import static com.codeborne.selenide.Selenide.page;
+import static io.qameta.allure.Allure.getLifecycle;
 import static java.util.Objects.requireNonNull;
+import static org.openqa.selenium.OutputType.BYTES;
 /* ************************************************************************************************/
 
 /**
@@ -48,6 +54,8 @@ public final class Dwalin {
    * </p>
    */
   public static final String AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE = "The at verification supplier cannot be null";
+
+  private static final Logger log = LogManager.getLogger();
 
   private Dwalin() {
 
@@ -94,5 +102,33 @@ public final class Dwalin {
     requireNonNull(page.atVerificationSupplier(), AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE).run();
 
     return page;
+  }
+
+  /**
+   * Captures a screenshot from the given {@code TakesScreenshot} subject and attaches it
+   * to the Allure report with a default description.
+   *
+   * @param subject the {@code TakesScreenshot} instance from which the screenshot will be captured
+   */
+  public static void attachScreenshotToAllureReport(final TakesScreenshot subject) {
+    attachScreenshotToAllureReport(subject, subject.toString());
+  }
+
+  /**
+   * Captures a screenshot from the given {@code TakesScreenshot} subject and attaches it
+   * to the Allure report with the specified description.
+   *
+   * @param subject     the {@code TakesScreenshot} instance from which the screenshot will be captured
+   * @param description the description to be used for the screenshot attachment in the Allure report
+   */
+  public static void attachScreenshotToAllureReport(final TakesScreenshot subject, final String description) {
+    getLifecycle().getCurrentTestCaseOrStep().ifPresent((_) -> {
+      try {
+        getLifecycle().addAttachment(
+            description, "image/png", "png", subject.getScreenshotAs(BYTES));
+      } catch (final WebDriverException exception) {
+        log.error("An screenshot couldn't be attached to the Allure report.", exception);
+      }
+    });
   }
 }

@@ -32,8 +32,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriverException;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -47,11 +45,10 @@ import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.page;
 import static com.codeborne.selenide.Selenide.webdriver;
 import static com.codeborne.selenide.WebDriverConditions.title;
+import static com.github.epadronu.dwalin.core.Dwalin.attachScreenshotToAllureReport;
 import static com.github.epadronu.dwalin.core.ElementGuard.guard;
-import static io.qameta.allure.Allure.getLifecycle;
 import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.openqa.selenium.OutputType.BYTES;
 /* ************************************************************************************************/
 
 /**
@@ -253,8 +250,8 @@ public final class SampleTests extends DwalinWebDriverTest {
         .results()
         .getFirst();
 
-    // Because we can but it may be useful
-    attachScreenshotToReport(firstResult);
+    // Because we can and it may be useful
+    attachScreenshotToAllureReport(firstResult, "First result");
 
     assertSoftly(softly -> {
       softly.assertThat(firstResult.title().text())
@@ -285,8 +282,8 @@ public final class SampleTests extends DwalinWebDriverTest {
         .results()
         .getFirst();
 
-    // Because we can but it may be useful
-    attachScreenshotToReport(firstResult);
+    // Because we can and it may be useful
+    attachScreenshotToAllureReport(firstResult, "First result");
 
     assertSoftly(softly -> {
       softly.assertThat(firstResult.title().text())
@@ -310,20 +307,6 @@ public final class SampleTests extends DwalinWebDriverTest {
       softly.assertThat(siteLink.description().text())
           .describedAs("The text of the 3rd site link in the first result did not match the expected value.")
           .startsWith("About Selenium Selenium is a suite of tools for automating web browsers.");
-    });
-  }
-
-  private static void attachScreenshotToReport(final TakesScreenshot subject) {
-    getLifecycle().getCurrentTestCaseOrStep().ifPresent((_) -> {
-      try {
-        getLifecycle().addAttachment(
-            subject.toString(),
-            "image/png",
-            "png",
-            subject.getScreenshotAs(BYTES));
-      } catch (final WebDriverException exception) {
-        log.error("An screenshot couldn't be taken.", exception);
-      }
     });
   }
 }
