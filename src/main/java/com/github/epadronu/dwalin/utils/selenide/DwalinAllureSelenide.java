@@ -51,13 +51,13 @@ import static java.lang.String.join;
 /**
  * <p>
  * Extends the functionality of {@link io.qameta.allure.selenide.AllureSelenide} by automatically
- * attaching screenshots for very step (if desired).
+ * attaching screenshots for every step (if enabled).
  * </p>
  *
  * @see io.qameta.allure.selenide.AllureSelenide
  */
 @ParametersAreNonnullByDefault
-public class DwalinAllureSelenide implements LogEventListener {
+public final class DwalinAllureSelenide implements LogEventListener {
 
   private static final Logger logger = LogManager.getLogger();
 
@@ -75,8 +75,8 @@ public class DwalinAllureSelenide implements LogEventListener {
 
   /**
    * <p>
-   * Creates a new {@code DwalinAllureSelenide} instance and initializes the {@link AllureLifecycle}
-   * by invoking {@link Allure#getLifecycle()}.
+   * Creates a new {@code DwalinAllureSelenide} instance and internally initializes
+   * the {@link AllureLifecycle} by invoking {@link Allure#getLifecycle()}.
    * </p>
    *
    * @see Allure#getLifecycle()
@@ -107,7 +107,7 @@ public class DwalinAllureSelenide implements LogEventListener {
    * </p>
    *
    * @param saveScreenshots whether to save screenshots for failed tests
-   * @return the current instance of {@code DwalinAllureSelenide}
+   * @return the current instance of {@code DwalinAllureSelenide} for method chaining
    */
   public DwalinAllureSelenide screenshots(final boolean saveScreenshots) {
     this.saveScreenshots = saveScreenshots;
@@ -120,7 +120,7 @@ public class DwalinAllureSelenide implements LogEventListener {
    * </p>
    *
    * @param saveScreenshotsForEveryStep whether to save screenshots for every step
-   * @return the current instance of {@code DwalinAllureSelenide}
+   * @return the current instance of {@code DwalinAllureSelenide} for method chaining
    */
   public DwalinAllureSelenide screenshotsForSteps(final boolean saveScreenshotsForEveryStep) {
     this.saveScreenshotsForEveryStep = saveScreenshotsForEveryStep;
@@ -133,7 +133,7 @@ public class DwalinAllureSelenide implements LogEventListener {
    * </p>
    *
    * @param savePageHtml whether to save the page source for failed tests
-   * @return the current instance of {@code DwalinAllureSelenide}
+   * @return the current instance of {@code DwalinAllureSelenide} for method chaining
    */
   public DwalinAllureSelenide savePageSource(final boolean savePageHtml) {
     this.savePageHtml = savePageHtml;
@@ -146,7 +146,7 @@ public class DwalinAllureSelenide implements LogEventListener {
    * </p>
    *
    * @param includeSelenideSteps whether to include Selenide locator steps
-   * @return the current instance of {@code DwalinAllureSelenide}
+   * @return the current instance of {@code DwalinAllureSelenide} for method chaining
    */
   public DwalinAllureSelenide includeSelenideSteps(final boolean includeSelenideSteps) {
     this.includeSelenideLocatorsSteps = includeSelenideSteps;
@@ -160,7 +160,7 @@ public class DwalinAllureSelenide implements LogEventListener {
    *
    * @param logType  the type of browser logs to save
    * @param logLevel the level of logs to capture
-   * @return the current instance of {@code DwalinAllureSelenide}
+   * @return the current instance of {@code DwalinAllureSelenide} for method chaining
    */
   public DwalinAllureSelenide enableLogs(final LogType logType, final Level logLevel) {
     this.logTypesToSave.put(logType, logLevel);
@@ -173,7 +173,7 @@ public class DwalinAllureSelenide implements LogEventListener {
    * </p>
    *
    * @param logType the type of browser logs to disable
-   * @return the current instance of {@code DwalinAllureSelenide}
+   * @return the current instance of {@code DwalinAllureSelenide} for method chaining
    */
   public DwalinAllureSelenide disableLogs(final LogType logType) {
     this.logTypesToSave.remove(logType);

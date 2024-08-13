@@ -20,8 +20,8 @@ package com.github.epadronu.dwalin.core;
 
 /**
  * <p>
- * Models a web page, serving as an implementation of a page class following the Page Object Model
- * pattern.
+ * Describes a web page, serving as the base of a page class implementation following the
+ * Page Object Model pattern.
  * </p>
  */
 public non-sealed interface Page extends AbstractionLayer {

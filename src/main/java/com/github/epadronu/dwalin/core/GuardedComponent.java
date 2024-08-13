@@ -1636,7 +1636,7 @@ public non-sealed abstract class GuardedComponent<P extends AbstractionLayer>
 
   @Override
   public String toString() {
-    return new StringJoiner(", ", GuardedComponent.class.getSimpleName() + "[", "]")
+    return new StringJoiner(", ", this.getClass().getSimpleName() + "[", "]")
         .add("parent=" + ascend().getClass().getSimpleName())
         .add("rootElement=" + rootElement().describe())
         .toString();

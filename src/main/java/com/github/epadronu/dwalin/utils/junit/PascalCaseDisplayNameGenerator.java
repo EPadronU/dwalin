@@ -49,12 +49,12 @@ public final class PascalCaseDisplayNameGenerator implements DisplayNameGenerato
    * Generates a human-friendly display name for the specified top-level or {@code static} nested test class.
    * </p>
    *
-   * @param aClass the class for which to generate a display name; never null
+   * @param testClass the class for which to generate a display name; never null
    * @return the generated display name; never null or blank
    */
   @Override
-  public String generateDisplayNameForClass(final Class<?> aClass) {
-    return pascalAndCamelCaseToHumanFriendly(aClass.getSimpleName());
+  public String generateDisplayNameForClass(final Class<?> testClass) {
+    return pascalAndCamelCaseToHumanFriendly(testClass.getSimpleName());
   }
 
   /**
@@ -62,12 +62,12 @@ public final class PascalCaseDisplayNameGenerator implements DisplayNameGenerato
    * Generates a human-friendly display name for the specified {@code @Nested} inner test class.
    * </p>
    *
-   * @param aClass the nested class for which to generate a display name; never null
+   * @param nestedClass the nested class for which to generate a display name; never null
    * @return the generated display name; never null or blank
    */
   @Override
-  public String generateDisplayNameForNestedClass(final Class<?> aClass) {
-    return pascalAndCamelCaseToHumanFriendly(aClass.getSimpleName());
+  public String generateDisplayNameForNestedClass(final Class<?> nestedClass) {
+    return pascalAndCamelCaseToHumanFriendly(nestedClass.getSimpleName());
   }
 
   /**
@@ -75,13 +75,13 @@ public final class PascalCaseDisplayNameGenerator implements DisplayNameGenerato
    * Generates a human-friendly display name for the specified test method.
    * </p>
    *
-   * @param aClass the class containing the test method; never null
-   * @param method the method for which to generate a display name; never null
+   * @param testClass  the class containing the test method; never null
+   * @param testMethod the method for which to generate a display name; never null
    * @return the generated display name; never null or blank
    */
   @Override
-  public String generateDisplayNameForMethod(final Class<?> aClass, final Method method) {
-    return pascalAndCamelCaseToHumanFriendly(method.getName());
+  public String generateDisplayNameForMethod(final Class<?> testClass, final Method testMethod) {
+    return pascalAndCamelCaseToHumanFriendly(testMethod.getName());
   }
 
   /**

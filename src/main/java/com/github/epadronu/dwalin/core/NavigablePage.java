@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 
 /**
  * <p>
- * Models a web page that can be navigated to within a browser.
+ * Describes a web page that can be navigated to within a browser.
  * </p>
  * <p>
  * Provides methods to supply the URL for navigation and to verify that the correct page has been reached.
@@ -39,7 +39,7 @@ public interface NavigablePage extends Page {
    * Returns a {@code Supplier} that provides the URL for the browser to navigate to.
    * </p>
    *
-   * @return a {@code Supplier<String>} that provides the URL.
+   * @return a {@code Supplier<String>} that provides the URL
    */
   @CheckReturnValue
   @Nonnull
@@ -48,7 +48,7 @@ public interface NavigablePage extends Page {
   /**
    * Returns a {@code Runnable} that performs verification to ensure the browser has navigated to the expected page.
    *
-   * @return a {@code Runnable} for verifying that the correct page has been reached.
+   * @return a {@code Runnable} for verifying that the correct page has been reached
    */
   @CheckReturnValue
   @Nonnull

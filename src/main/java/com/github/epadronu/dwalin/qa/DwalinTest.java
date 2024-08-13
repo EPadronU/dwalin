@@ -67,8 +67,8 @@ public class DwalinTest {
    */
   @BeforeEach
   @DisplayName("Trace the start of a test method")
-  protected void traceStartTestMethod(final TestInfo testInfo) {
-    atomicEntryMessage.set(logger.traceEntry("Running test {}", testInfo.getDisplayName()));
+  protected void traceTestMethodStart(final TestInfo testInfo) {
+    atomicEntryMessage.set(logger.traceEntry("TEST «{}»", testInfo.getDisplayName()));
   }
 
   /**
@@ -80,7 +80,7 @@ public class DwalinTest {
    */
   @AfterEach
   @DisplayName("Trace the end of a test method")
-  protected void traceEndTestMethod() {
+  protected void traceTestMethodEnd() {
     logger.traceExit(atomicEntryMessage.get());
   }
 }

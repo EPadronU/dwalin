@@ -1,9 +1,17 @@
+# Ignore Allure Commandline files and directories
 .allure/
+
+# Ignore IntelliJ IDEA project files and directories
 .idea/
+
+# Ignore Eclipse project settings
 .settings/
+
+# Ignore build output directories for Gradle and Maven
 build/
 target/
 
+# Ignore Eclipse project files
 .classpath
 .factorypath
 .project

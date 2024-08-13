@@ -33,10 +33,10 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * <p>
- * Models a reusable interface component that can appear multiple times across one or more pages or components.
+ * Describes a reusable interface component that can appear multiple times across one or more pages or components.
  * </p>
  *
- * @param <P> the type of parent to which this component is associated
+ * @param <P> the type of parent to which this component is associated with
  */
 public sealed abstract class Component<P extends AbstractionLayer>
     implements AbstractionLayer
@@ -62,7 +62,8 @@ public sealed abstract class Component<P extends AbstractionLayer>
 
   /**
    * <p>
-   * Constructs a new component linked to the specified parent, using the provided element as the root search context.
+   * Constructs a new component associated with the specified parent, using the provided element
+   * as the root search context.
    * </p>
    *
    * @param parent      the parent to which this component is associated
@@ -77,7 +78,7 @@ public sealed abstract class Component<P extends AbstractionLayer>
 
   /**
    * <p>
-   * Retrieves the parent to which this component is associated.
+   * Retrieves the parent to which this component is associated with.
    * </p>
    * <p>
    * It's like ascending in the composition tree.
@@ -143,7 +144,7 @@ public sealed abstract class Component<P extends AbstractionLayer>
 
   @Override
   public String toString() {
-    return new StringJoiner(", ", Component.class.getSimpleName() + "[", "]")
+    return new StringJoiner(", ", this.getClass().getSimpleName() + "[", "]")
         .add("parent=" + parent.getClass().getSimpleName())
         .add("rootElement=" + rootElement.describe())
         .toString();

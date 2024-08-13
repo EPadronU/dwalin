@@ -49,17 +49,19 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.time.Duration;
 import java.util.NoSuchElementException;
+import java.util.StringJoiner;
 
 import static java.util.Objects.requireNonNull;
 /* ************************************************************************************************/
 
 /**
  * <p>
- * A {@code SelenideElement} wrapper designed for developers who prefer not to expose
+ * A {@code SelenideElement} facade designed for developers who prefer not to expose
  * {@code WebElement} instances or {@code WebElement}-like behavior in the public API of their pages.
  * </p>
  *
  * @see SelenideElement
+ * @see GuardedComponent
  */
 public final class ElementGuard implements TakesScreenshot {
 
@@ -83,6 +85,7 @@ public final class ElementGuard implements TakesScreenshot {
    *
    * @param element the element to be encapsulated
    * @return a new {@code ElementGuard} that wraps the provided element
+   * @throws NullPointerException if {@code element} is {@code null}
    */
   public static ElementGuard guard(final SelenideElement element) {
     return new ElementGuard(requireNonNull(element, ELEMENT_CANNOT_BE_NULL_MESSAGE));
@@ -1314,6 +1317,8 @@ public final class ElementGuard implements TakesScreenshot {
   @CheckReturnValue
   @Override
   public String toString() {
-    return element.describe();
+    return new StringJoiner(", ", ElementGuard.class.getSimpleName() + "[", "]")
+        .add("element=" + element.describe())
+        .toString();
   }
 }

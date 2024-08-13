@@ -28,7 +28,10 @@ limitations under the License.
 
   <!-- Maven Project Information -->
   <name>Dwalin</name>
-  <description>Dwalin is a web automation library for Java. It’s a Selenide/Selenium-WebDriver wrapper inspired by Geb and its elder brother Balin.</description>
+  <description>
+    Dwalin is a web-automation library for Java. It's a Selenide/Selenium-WebDriver wrapper inspired by Geb and its
+    elder brother Balin.
+  </description>
   <url>https://github.com/epadronu/dwalin</url>
 
   <!-- Project Properties -->
@@ -37,7 +40,7 @@ limitations under the License.
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>22</maven.compiler.release>
 
-    <!-- Plugin' Versions -->
+    <!-- Plugin' versions -->
     <allure.maven.version>2.13.0</allure.maven.version>
     <maven.archetype.plugin.version>3.2.1</maven.archetype.plugin.version>
     <maven.clean.plugin.version>3.4.0</maven.clean.plugin.version>
@@ -54,7 +57,7 @@ limitations under the License.
     <maven.surefire.plugin.version>3.3.1</maven.surefire.plugin.version>
     <versions.maven.plugin.version>2.17.1</versions.maven.plugin.version>
 
-    <!-- Dependencies' Versions -->
+    <!-- Dependencies' versions -->
     <allure.report.version>2.30.0</allure.report.version>
     <allure.version>2.28.1</allure.version>
     <assertj.version>3.26.3</assertj.version>
@@ -141,7 +144,7 @@ limitations under the License.
   </dependencies>
 
   <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults -->
       <plugins>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
@@ -231,14 +234,18 @@ limitations under the License.
         <configuration>
           <!-- JUnit5 configuration -->
           <statelessTestsetReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
+            <usePhrasedFileName>true</usePhrasedFileName>
             <usePhrasedTestSuiteClassName>true</usePhrasedTestSuiteClassName>
             <usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>
             <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
           </statelessTestsetReporter>
 
-          <consoleOutputReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5ConsoleOutputReporter"/>
+          <consoleOutputReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5ConsoleOutputReporter">
+            <usePhrasedFileName>true</usePhrasedFileName>
+          </consoleOutputReporter>
 
           <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoReporter">
+            <usePhrasedFileName>true</usePhrasedFileName>
             <usePhrasedClassNameInRunning>true</usePhrasedClassNameInRunning>
             <usePhrasedClassNameInTestCaseSummary>true</usePhrasedClassNameInTestCaseSummary>
           </statelessTestsetInfoReporter>
@@ -255,7 +262,6 @@ limitations under the License.
           </allureDownloadUrl>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
 

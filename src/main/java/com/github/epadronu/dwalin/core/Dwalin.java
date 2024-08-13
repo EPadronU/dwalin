@@ -36,7 +36,8 @@ import static org.openqa.selenium.OutputType.BYTES;
 
 /**
  * <p>
- * Provides methods for navigating to pages that extends the {@code NavigablePage} interface.
+ * Provides a set of utility methods for navigating to pages that implement the {@code NavigablePage} interface,
+ * along with other useful functionality for test automation.
  * </p>
  */
 public final class Dwalin {
