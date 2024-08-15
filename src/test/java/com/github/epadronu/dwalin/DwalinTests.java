@@ -21,26 +21,36 @@ package com.github.epadronu.dwalin;
 /* ************************************************************************************************/
 import com.codeborne.selenide.ex.UIAssertionError;
 import com.github.epadronu.dwalin.core.Dwalin;
+import com.github.epadronu.dwalin.core.ElementGuard;
 import com.github.epadronu.dwalin.core.NavigablePage;
 import com.github.epadronu.dwalin.qa.DwalinWebDriverTest;
+import io.qameta.allure.model.Attachment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriverException;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.webdriver;
 import static com.codeborne.selenide.WebDriverConditions.title;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static com.github.epadronu.dwalin.core.Dwalin.attachScreenshotToAllureReport;
+import static com.github.epadronu.dwalin.core.ElementGuard.guard;
+import static io.qameta.allure.Allure.getLifecycle;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 /* ************************************************************************************************/
 
 /**
- * Tests validating the functionality of the Dwalin utility class, as well as the AbstractionLayer
- * and NavigablePage interfaces.
+ * Tests validating the functionality of the Dwalin utility class, as well as the NavigablePage interface.
+ *
+ * @see Dwalin
+ * @see NavigablePage
  */
 @Tag("core")
 @DisplayName("Dwalin's tests")
@@ -54,6 +64,8 @@ public final class DwalinTests extends DwalinWebDriverTest {
 
   private static class SearXNGHomePage implements NavigablePage {
 
+    private static final By title = By.className("title");
+
     @Nonnull
     @Override
     public Supplier<String> urlSupplier() {
@@ -64,6 +76,10 @@ public final class DwalinTests extends DwalinWebDriverTest {
     @Override
     public Runnable atVerificationSupplier() {
       return () -> webdriver().shouldHave(title(EXPECTED_TITLE));
+    }
+
+    public ElementGuard pageTitle() {
+      return guard($(title).shouldBe(visible));
     }
   }
 
@@ -76,7 +92,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
     }
   }
 
-  private static final class WrongTitlePage extends SearXNGHomePage {
+  private static final class WrongAtVerificationPage extends SearXNGHomePage {
 
     @Nonnull
     @Override
@@ -85,12 +101,21 @@ public final class DwalinTests extends DwalinWebDriverTest {
     }
   }
 
-  private static final class NullUrlPage extends SearXNGHomePage {
+  private static final class NullUrlSupplierPage extends SearXNGHomePage {
 
     @Nonnull
     @Override
     public Supplier<String> urlSupplier() {
       return null;
+    }
+  }
+
+  private static final class NullUrlPage extends SearXNGHomePage {
+
+    @Nonnull
+    @Override
+    public Supplier<String> urlSupplier() {
+      return () -> null;
     }
   }
 
@@ -105,7 +130,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("happy-path")
-  void shouldWorkAsExpectedWhenTheOpenMethodInheritedFromTheAbstractionLayerInterfaceIsCalledWithAClassParameter() {
+  void shouldWorkAsExpectedWhenTheNavigateToStaticMethodIsCalledWithAClassParameter() {
     assertThatCode(() -> Dwalin.navigateTo(SearXNGHomePage.class))
         .describedAs("Navigation did not proceed as expected; no exceptions should have been thrown.")
         .doesNotThrowAnyException();
@@ -123,7 +148,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("sad-path")
-  void shouldFailWhenTheOpenMethodInheritedFromTheAbstractionLayerInterfaceIsCalledWithAClassParameterAndTheUrlIsWrong() {
+  void shouldFailWhenTheNavigateToStaticMethodIsCalledWithAClassParameterAndThePageUrlIsWrong() {
     assertThatCode(() -> Dwalin.navigateTo(WrongUrlPage.class))
         .describedAs("Navigation should have thrown an error.")
         .hasMessageContaining("unknown error: net::ERR_NAME_NOT_RESOLVED")
@@ -132,8 +157,8 @@ public final class DwalinTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("sad-path")
-  void shouldFailWhenTheOpenMethodInheritedFromTheAbstractionLayerInterfaceIsCalledWithAClassParameterAndTheAtVerificationFails() {
-    assertThatCode(() -> Dwalin.navigateTo(WrongTitlePage.class))
+  void shouldFailWhenTheNavigateToStaticMethodIsCalledWithAClassParameterAndTheAtVerificationFails() {
+    assertThatCode(() -> Dwalin.navigateTo(WrongAtVerificationPage.class))
         .describedAs("Navigation should have thrown an error.")
         .hasMessageContaining("Page should have title " + WRONG_EXPECTED_TITLE)
         .doesNotThrowAnyExceptionExcept(UIAssertionError.class);
@@ -141,7 +166,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("happy-path")
-  void shouldWorkAsExpectedWhenTheOpenMethodInheritedFromTheAbstractionLayerInterfaceIsCalledWithAReifiedGeneric() {
+  void shouldWorkAsExpectedWhenTheNavigateToStaticMethodIsCalledWithAReifiedGeneric() {
     assertThatCode(() -> Dwalin.<SearXNGHomePage>navigateTo())
         .describedAs("Navigation did not proceed as expected; no exceptions should have been thrown.")
         .doesNotThrowAnyException();
@@ -159,7 +184,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("sad-path")
-  void shouldFailWhenTheOpenMethodInheritedFromTheAbstractionLayerInterfaceIsCalledWithAReifiedGenericAndTheUrlIsWrong() {
+  void shouldFailWhenTheNavigateToStaticMethodIsCalledWithAReifiedGenericAndThePageUrlIsWrong() {
     assertThatCode(() -> Dwalin.<WrongUrlPage>navigateTo())
         .describedAs("Navigation should have thrown an error.")
         .hasMessageContaining("unknown error: net::ERR_NAME_NOT_RESOLVED")
@@ -168,8 +193,8 @@ public final class DwalinTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("sad-path")
-  void shouldFailWhenTheOpenMethodInheritedFromTheAbstractionLayerInterfaceIsCalledWithAReifiedGenericAndTheAtVerificationFails() {
-    assertThatCode(() -> Dwalin.<WrongTitlePage>navigateTo())
+  void shouldFailWhenTheNavigateToStaticMethodIsCalledWithAReifiedGenericAndTheAtVerificationFails() {
+    assertThatCode(() -> Dwalin.<WrongAtVerificationPage>navigateTo())
         .describedAs("Navigation should have thrown an error.")
         .hasMessageContaining("Page should have title " + WRONG_EXPECTED_TITLE)
         .doesNotThrowAnyExceptionExcept(UIAssertionError.class);
@@ -177,8 +202,8 @@ public final class DwalinTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("sad-path")
-  void shouldFailWhenAttemptingToOpenAPageWithANullUrlSupplier() {
-    assertThatCode(() -> Dwalin.navigateTo(NullUrlPage.class))
+  void shouldFailWhenAttemptingToNavigateToAPageWithANullUrlSupplier() {
+    assertThatCode(() -> Dwalin.navigateTo(NullUrlSupplierPage.class))
         .describedAs("Navigation should have thrown an error.")
         .hasMessage(Dwalin.URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE)
         .doesNotThrowAnyExceptionExcept(NullPointerException.class);
@@ -186,10 +211,84 @@ public final class DwalinTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("sad-path")
-  void shouldFailWhenAttemptingToOpenAPageWithANullAtVerificationSupplier() {
+  void shouldFailWhenAttemptingToNavigateToAPageWithANullUrl() {
+    assertThatCode(() -> Dwalin.navigateTo(NullUrlPage.class))
+        .describedAs("Navigation should have thrown an error.")
+        .hasMessage(Dwalin.URL_CANNOT_BE_NULL_MESSAGE)
+        .doesNotThrowAnyExceptionExcept(NullPointerException.class);
+  }
+
+  @Test
+  @Tag("sad-path")
+  void shouldFailWhenAttemptingToNavigateToAPageWithANullAtVerificationSupplier() {
     assertThatCode(() -> Dwalin.<NullAtVerificationPage>navigateTo())
         .describedAs("Navigation should have thrown an error.")
         .hasMessage(Dwalin.AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE)
         .doesNotThrowAnyExceptionExcept(NullPointerException.class);
+  }
+
+  @Test
+  @Tag("happy-path")
+  void shouldWorkWhenAttachingAScreenshotToTheAllureReportWithTheDefaultDescription() {
+    assertThatCode(() -> attachScreenshotToAllureReport(Dwalin.<SearXNGHomePage>navigateTo().pageTitle()))
+        .describedAs("Navigation did not proceed as expected; no exceptions should have been thrown.")
+        .doesNotThrowAnyException();
+
+    assertScreenshotAttachment("ElementGuard[element=<div class=\"title\"></div>]");
+  }
+
+  @Test
+  @Tag("happy-path")
+  void shouldWorkWhenAttachingAScreenshotToTheAllureReportWithTheSpecifiedDescription() {
+    assertThatCode(() -> attachScreenshotToAllureReport(Dwalin.<SearXNGHomePage>navigateTo().pageTitle(), "Title"))
+        .describedAs("Navigation did not proceed as expected; no exceptions should have been thrown.")
+        .doesNotThrowAnyException();
+
+    assertScreenshotAttachment("Title");
+  }
+
+  @Test
+  @Tag("sad-path")
+  @Tag("now")
+  void shouldFailWhenAttemptingToAttachAScreenshotToTheAllureReportWithNullSubjectOrDescription() {
+    final SearXNGHomePage page = Dwalin.navigateTo();
+
+    assertSoftly(softly -> {
+      softly.assertThatCode(() -> attachScreenshotToAllureReport(null))
+          .describedAs("Navigation did not proceed as expected; no exceptions should have been thrown.")
+          .hasMessage(Dwalin.SUBJECT_CANNOT_BE_NULL_MESSAGE)
+          .doesNotThrowAnyExceptionExcept(NullPointerException.class);
+
+      softly.assertThatCode(() -> attachScreenshotToAllureReport(page.pageTitle(), null))
+          .describedAs("Navigation did not proceed as expected; no exceptions should have been thrown.")
+          .hasMessage(Dwalin.DESCRIPTION_CANNOT_BE_NULL_MESSAGE)
+          .doesNotThrowAnyExceptionExcept(NullPointerException.class);
+    });
+  }
+
+  private static void assertScreenshotAttachment(final String description) {
+    getLifecycle().updateTestCase(testResult -> {
+      final Attachment screenshot = testResult.getAttachments()
+          .stream()
+          .findFirst()
+          .orElseThrow(() -> new AssertionError("No attachment was found during the operation."));
+
+      assertSoftly(softly -> {
+        softly.assertThat(screenshot.getName())
+            .describedAs("The attachment's name did not match the expected value.")
+            .isNotBlank()
+            .isEqualTo(description);
+
+        softly.assertThat(screenshot.getType())
+            .describedAs("The attachment was not a PNG image as expected.")
+            .isNotBlank()
+            .isEqualTo("image/png");
+
+        softly.assertThat(screenshot.getSource())
+            .describedAs("The attachment's source must have the correct file extension.")
+            .isNotBlank()
+            .endsWith(".png");
+      });
+    });
   }
 }

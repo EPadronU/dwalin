@@ -44,14 +44,35 @@ public final class Dwalin {
 
   /**
    * <p>
-   * Error message displayed when attempting to open a page with a null URL supplier.
+   * Error message displayed when attempting to navigate to a page with a null URL supplier.
    * </p>
    */
   public static final String URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE = "The URL supplier cannot be null";
 
   /**
    * <p>
-   * Error message displayed when attempting to open a page with a null "at verification" supplier.
+   * Error message displayed when attempting to navigate to a page with a null URL.
+   * </p>
+   */
+  public static final String URL_CANNOT_BE_NULL_MESSAGE = "The URL cannot be null";
+
+  /**
+   * <p>
+   * Error message displayed when attempting to attach a screenshot of a null subject.
+   * </p>
+   */
+  public static final String SUBJECT_CANNOT_BE_NULL_MESSAGE = "The subject cannot be null";
+
+  /**
+   * <p>
+   * Error message displayed when attempting to attach a screenshot associated with a null description.
+   * </p>
+   */
+  public static final String DESCRIPTION_CANNOT_BE_NULL_MESSAGE = "The description cannot be null";
+
+  /**
+   * <p>
+   * Error message displayed when attempting to navigate to a page with a null "at verification" supplier.
    * </p>
    */
   public static final String AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE = "The at verification supplier cannot be null";
@@ -70,17 +91,12 @@ public final class Dwalin {
    * @param pageObjectClass a {@code Class<P>} representing the type of the page to navigate to
    * @param <P>             the type of the page to navigate to
    * @return a new instance of the specified page
+   * @throws NullPointerException if {@code pageObjectClass} is {@code null}
    */
   @CheckReturnValue
   @Nonnull
-  public static <P extends NavigablePage> P navigateTo(final Class<P> pageObjectClass) {
-    final P page = page(pageObjectClass);
-
-    Selenide.open(requireNonNull(page.urlSupplier(), URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE).get());
-
-    requireNonNull(page.atVerificationSupplier(), AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE).run();
-
-    return page;
+  public static <P extends NavigablePage> P navigateTo(@Nonnull final Class<P> pageObjectClass) {
+    return openAndCheckAtVerification(page(pageObjectClass));
   }
 
   /**
@@ -96,13 +112,7 @@ public final class Dwalin {
   @Nonnull
   @SuppressWarnings("unchecked")
   public static <P extends NavigablePage> P navigateTo(final P... reified) {
-    final P page = page(reified);
-
-    Selenide.open(requireNonNull(page.urlSupplier(), URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE).get());
-
-    requireNonNull(page.atVerificationSupplier(), AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE).run();
-
-    return page;
+    return openAndCheckAtVerification(page(reified));
   }
 
   /**
@@ -110,8 +120,12 @@ public final class Dwalin {
    * to the Allure report with a default description.
    *
    * @param subject the {@code TakesScreenshot} instance from which the screenshot will be captured
+   * @throws NullPointerException if {@code subject} is {@code null}
    */
-  public static void attachScreenshotToAllureReport(final TakesScreenshot subject) {
+  @CheckReturnValue
+  public static void attachScreenshotToAllureReport(@Nonnull final TakesScreenshot subject) {
+    requireNonNull(subject, SUBJECT_CANNOT_BE_NULL_MESSAGE);
+
     attachScreenshotToAllureReport(subject, subject.toString());
   }
 
@@ -121,8 +135,13 @@ public final class Dwalin {
    *
    * @param subject     the {@code TakesScreenshot} instance from which the screenshot will be captured
    * @param description the description to be used for the screenshot attachment in the Allure report
+   * @throws NullPointerException if either {@code subject} or {@code description} are {@code null}
    */
-  public static void attachScreenshotToAllureReport(final TakesScreenshot subject, final String description) {
+  @CheckReturnValue
+  public static void attachScreenshotToAllureReport(@Nonnull final TakesScreenshot subject, @Nonnull final String description) {
+    requireNonNull(subject, SUBJECT_CANNOT_BE_NULL_MESSAGE);
+    requireNonNull(description, DESCRIPTION_CANNOT_BE_NULL_MESSAGE);
+
     getLifecycle().getCurrentTestCaseOrStep().ifPresent((_) -> {
       try {
         getLifecycle().addAttachment(
@@ -131,5 +150,15 @@ public final class Dwalin {
         log.error("An screenshot couldn't be attached to the Allure report.", exception);
       }
     });
+  }
+
+  private static <P extends NavigablePage> P openAndCheckAtVerification(final P page) {
+    Selenide.open(requireNonNull(
+        requireNonNull(page.urlSupplier(), URL_SUPPLIER_CANNOT_BE_NULL_MESSAGE).get(),
+        URL_CANNOT_BE_NULL_MESSAGE));
+
+    requireNonNull(page.atVerificationSupplier(), AT_VERIFICATION_SUPPLIER_CANNOT_BE_NULL_MESSAGE).run();
+
+    return page;
   }
 }
