@@ -22,7 +22,7 @@ limitations under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <!-- Maven Project Coordinates -->
-  <groupId>com.github.epadronu</groupId>
+  <groupId>io.github.epadronu</groupId>
   <artifactId>dwalin</artifactId>
   <version>1.0-SNAPSHOT</version>
 

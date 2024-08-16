@@ -42,7 +42,7 @@ limitations under the License.
       <AppenderRef ref="file"/>
     </Root>
 
-    <Logger name="com.github.epadronu" level="TRACE">
+    <Logger name="io.github.epadronu" level="TRACE">
       <AppenderRef ref="console"/>
     </Logger>
   </Loggers>

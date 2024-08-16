@@ -1,4 +1,4 @@
-com.github.epadronu.dwalin.core
-com.github.epadronu.dwalin.qa
-com.github.epadronu.dwalin.utils.junit
-com.github.epadronu.dwalin.utils.selenide
+io.github.epadronu.dwalin.core
+io.github.epadronu.dwalin.qa
+io.github.epadronu.dwalin.utils.junit
+io.github.epadronu.dwalin.utils.selenide
