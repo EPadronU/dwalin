@@ -48,13 +48,17 @@ TODO
 ### Maven
 
 ```xml
-TODO
+<dependency>
+    <groupId>io.github.epadronu</groupId>
+    <artifactId>dwalin</artifactId>
+    <version>0.1.0</version>
+</dependency>
 ```
 
 ### Gradle
 
 ```groovy
-TODO
+implementation 'io.github.epadronu:dwalin:0.1.0'
 ```
 
 
