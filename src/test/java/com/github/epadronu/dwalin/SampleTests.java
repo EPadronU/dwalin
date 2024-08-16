@@ -219,7 +219,7 @@ public final class SampleTests extends DwalinWebDriverTest {
      * @param parent      the parent containing this component
      * @param rootElement the root element of the site link
      */
-    public SiteLink(P parent, SelenideElement rootElement) {
+    public SiteLink(final P parent, final SelenideElement rootElement) {
       super(parent, rootElement);
     }
 
