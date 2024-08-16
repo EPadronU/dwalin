@@ -25,14 +25,42 @@ limitations under the License.
   <groupId>io.github.epadronu</groupId>
   <artifactId>dwalin</artifactId>
   <version>1.0-SNAPSHOT</version>
-
+  
   <!-- Maven Project Information -->
   <name>Dwalin</name>
   <description>
     Dwalin is a web-automation library for Java. It's a Selenide/Selenium-WebDriver wrapper inspired by Geb and its
     elder brother Balin.
   </description>
+  <inceptionYear>2024</inceptionYear>
   <url>https://github.com/epadronu/dwalin</url>
+
+  <!-- Maven Central Information -->
+  <licenses>
+    <license>
+      <name>Apache-2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>epadronu</id>
+      <name>Edinson E. Padrón Urdaneta</name>
+      <email>edinson.padron+git@posteo.net</email>
+      <url>https://epadronu.github.io/</url>
+      <timezone>America/Bogota</timezone>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>https://github.com/epadronu/dwalin.git</url>
+    <connection>scm:git:https://github.com/epadronu/dwalin.git</connection>
+    <developerConnection>scm:git:https://github.com/epadronu/dwalin.git</developerConnection>
+    <tag>0.1.0</tag>
+  </scm>
 
   <!-- Project Properties -->
   <properties>
@@ -42,6 +70,7 @@ limitations under the License.
 
     <!-- Plugin' versions -->
     <allure.maven.version>2.13.0</allure.maven.version>
+    <jreleaser.maven.plugin.version>1.13.1</jreleaser.maven.plugin.version>
     <maven.archetype.plugin.version>3.2.1</maven.archetype.plugin.version>
     <maven.clean.plugin.version>3.4.0</maven.clean.plugin.version>
     <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
@@ -54,6 +83,7 @@ limitations under the License.
     <maven.release.plugin.version>3.1.1</maven.release.plugin.version>
     <maven.resources.plugin.version>3.3.1</maven.resources.plugin.version>
     <maven.site.plugin.version>4.0.0-M16</maven.site.plugin.version>
+    <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
     <maven.surefire.plugin.version>3.3.1</maven.surefire.plugin.version>
     <versions.maven.plugin.version>2.17.1</versions.maven.plugin.version>
 
@@ -160,6 +190,10 @@ limitations under the License.
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>${maven.resources.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven.source.plugin.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -286,4 +320,63 @@ limitations under the License.
       </plugin>
     </plugins>
   </reporting>
+
+  <!-- Profiles -->
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadoc</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-source</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.jreleaser</groupId>
+            <artifactId>jreleaser-maven-plugin</artifactId>
+            <version>${jreleaser.maven.plugin.version}</version>
+            <configuration>
+              <jreleaser>
+                <signing>
+                  <active>ALWAYS</active>
+                  <armored>true</armored>
+                </signing>
+                <deploy>
+                  <maven>
+                    <mavenCentral>
+                      <sonatype>
+                        <active>ALWAYS</active>
+                        <url>https://central.sonatype.com/api/v1/publisher</url>
+                        <stagingRepositories>target/staging-deploy</stagingRepositories>
+                      </sonatype>
+                    </mavenCentral>
+                  </maven>
+                </deploy>
+              </jreleaser>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
