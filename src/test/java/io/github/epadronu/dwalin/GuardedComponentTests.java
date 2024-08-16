@@ -233,7 +233,6 @@ public final class GuardedComponentTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("happy-path")
-  @Tag("now")
   void shouldTheToStringMethodForGuardedComponentsWorkAsExpected() {
     final var resultPage = open(PAGE_URL, DuckDuckGoHomePage.class)
         .searchBox()

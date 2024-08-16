@@ -249,7 +249,6 @@ public final class DwalinTests extends DwalinWebDriverTest {
 
   @Test
   @Tag("sad-path")
-  @Tag("now")
   void shouldFailWhenAttemptingToAttachAScreenshotToTheAllureReportWithNullSubjectOrDescription() {
     final SearXNGHomePage page = Dwalin.navigateTo();
 
