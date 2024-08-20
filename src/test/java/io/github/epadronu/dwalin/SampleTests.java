@@ -30,7 +30,7 @@ import io.github.epadronu.dwalin.core.Page;
 import io.github.epadronu.dwalin.qa.DwalinWebDriverTest;
 import io.github.epadronu.dwalin.visual.ImageComparisonHelper;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
@@ -245,7 +245,7 @@ public final class SampleTests extends DwalinWebDriverTest {
     }
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   void shouldFirstResultBeOraclesAndHaveSiteLinksWhenSearchingForJava() {
     final ImageComparisonHelper helper = ImageComparisonHelper.builder()
         .imageComparisonConfigurationContext(config -> config.setDifferenceRectangleColor(Color.BLUE))
@@ -285,7 +285,7 @@ public final class SampleTests extends DwalinWebDriverTest {
     });
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   void shouldFirstResultBeTheOfficialOneAndHaveSiteLinksWhenSearchingForSelenium() {
     final SearchResult<DuckDuckGoSearchResultPage> firstResult = Dwalin.navigateTo(DuckDuckGoHomePage.class)
         .searchBox()

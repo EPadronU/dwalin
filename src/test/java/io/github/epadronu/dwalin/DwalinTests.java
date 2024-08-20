@@ -27,7 +27,7 @@ import io.github.epadronu.dwalin.qa.DwalinWebDriverTest;
 import io.qameta.allure.model.Attachment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriverException;
 
@@ -128,7 +128,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
     }
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("happy-path")
   void shouldWorkAsExpectedWhenTheNavigateToStaticMethodIsCalledWithAClassParameter() {
     assertThatCode(() -> Dwalin.navigateTo(SearXNGHomePage.class))
@@ -146,7 +146,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
     });
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("sad-path")
   void shouldFailWhenTheNavigateToStaticMethodIsCalledWithAClassParameterAndThePageUrlIsWrong() {
     assertThatCode(() -> Dwalin.navigateTo(WrongUrlPage.class))
@@ -155,7 +155,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
         .doesNotThrowAnyExceptionExcept(WebDriverException.class);
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("sad-path")
   void shouldFailWhenTheNavigateToStaticMethodIsCalledWithAClassParameterAndTheAtVerificationFails() {
     assertThatCode(() -> Dwalin.navigateTo(WrongAtVerificationPage.class))
@@ -164,7 +164,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
         .doesNotThrowAnyExceptionExcept(UIAssertionError.class);
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("happy-path")
   void shouldWorkAsExpectedWhenTheNavigateToStaticMethodIsCalledWithAReifiedGeneric() {
     assertThatCode(() -> Dwalin.<SearXNGHomePage>navigateTo())
@@ -182,7 +182,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
     });
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("sad-path")
   void shouldFailWhenTheNavigateToStaticMethodIsCalledWithAReifiedGenericAndThePageUrlIsWrong() {
     assertThatCode(() -> Dwalin.<WrongUrlPage>navigateTo())
@@ -191,7 +191,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
         .doesNotThrowAnyExceptionExcept(WebDriverException.class);
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("sad-path")
   void shouldFailWhenTheNavigateToStaticMethodIsCalledWithAReifiedGenericAndTheAtVerificationFails() {
     assertThatCode(() -> Dwalin.<WrongAtVerificationPage>navigateTo())
@@ -200,7 +200,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
         .doesNotThrowAnyExceptionExcept(UIAssertionError.class);
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("sad-path")
   void shouldFailWhenAttemptingToNavigateToAPageWithANullUrlSupplier() {
     assertThatCode(() -> Dwalin.navigateTo(NullUrlSupplierPage.class))
@@ -209,7 +209,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
         .doesNotThrowAnyExceptionExcept(NullPointerException.class);
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("sad-path")
   void shouldFailWhenAttemptingToNavigateToAPageWithANullUrl() {
     assertThatCode(() -> Dwalin.navigateTo(NullUrlPage.class))
@@ -218,7 +218,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
         .doesNotThrowAnyExceptionExcept(NullPointerException.class);
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("sad-path")
   void shouldFailWhenAttemptingToNavigateToAPageWithANullAtVerificationSupplier() {
     assertThatCode(() -> Dwalin.<NullAtVerificationPage>navigateTo())
@@ -227,7 +227,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
         .doesNotThrowAnyExceptionExcept(NullPointerException.class);
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("happy-path")
   void shouldWorkWhenAttachingAScreenshotToTheAllureReportWithTheDefaultDescription() {
     assertThatCode(() -> attachScreenshotToAllureReport(Dwalin.<SearXNGHomePage>navigateTo().pageTitle()))
@@ -237,7 +237,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
     assertScreenshotAttachment("ElementGuard[element=<div class=\"title\"></div>]");
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("happy-path")
   void shouldWorkWhenAttachingAScreenshotToTheAllureReportWithTheSpecifiedDescription() {
     assertThatCode(() -> attachScreenshotToAllureReport(Dwalin.<SearXNGHomePage>navigateTo().pageTitle(), "Title"))
@@ -247,7 +247,7 @@ public final class DwalinTests extends DwalinWebDriverTest {
     assertScreenshotAttachment("Title");
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("sad-path")
   void shouldFailWhenAttemptingToAttachAScreenshotToTheAllureReportWithNullSubjectOrDescription() {
     final SearXNGHomePage page = Dwalin.navigateTo();

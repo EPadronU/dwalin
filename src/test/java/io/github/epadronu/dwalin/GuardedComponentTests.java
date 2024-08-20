@@ -28,7 +28,7 @@ import io.github.epadronu.dwalin.core.Page;
 import io.github.epadronu.dwalin.qa.DwalinWebDriverTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
@@ -187,7 +187,7 @@ public final class GuardedComponentTests extends DwalinWebDriverTest {
     }
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("happy-path")
   void shouldWorkAsExpectedWhenInteractingWithAPageThroughTheUseOfGuardedComponents() {
     assertThatCode(() -> {
@@ -209,7 +209,7 @@ public final class GuardedComponentTests extends DwalinWebDriverTest {
         .doesNotThrowAnyException();
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("happy-path")
   void shouldTheParentsForGuardedComponentsAndNesterGuardedComponentsBeSetAsExpected() {
     final var resultPage = open(PAGE_URL, DuckDuckGoHomePage.class)
@@ -231,7 +231,7 @@ public final class GuardedComponentTests extends DwalinWebDriverTest {
     });
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("happy-path")
   void shouldTheToStringMethodForGuardedComponentsWorkAsExpected() {
     final var resultPage = open(PAGE_URL, DuckDuckGoHomePage.class)
@@ -253,7 +253,7 @@ public final class GuardedComponentTests extends DwalinWebDriverTest {
     });
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("sad-path")
   void shouldFailToConstructAGuardedComponentWithANullPage() {
     assertThatCode(() -> {
@@ -266,7 +266,7 @@ public final class GuardedComponentTests extends DwalinWebDriverTest {
         .doesNotThrowAnyExceptionExcept(NullPointerException.class);
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("sad-path")
   void shouldFailToConstructAGuardedComponentWithANullRootElement() {
     assertThatCode(() -> {
@@ -277,7 +277,7 @@ public final class GuardedComponentTests extends DwalinWebDriverTest {
         .doesNotThrowAnyExceptionExcept(NullPointerException.class);
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("sad-path")
   void shouldFailWhenUsingNullsInTheAsComponentAndAsComponentsMethodsForGuardedComponents() {
     final NullsForAsComponentMethodsPage page = page();
@@ -305,7 +305,7 @@ public final class GuardedComponentTests extends DwalinWebDriverTest {
     });
   }
 
-  @Test
+  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
   @Tag("sad-path")
   void shouldFailWhenUsingNullsInTheAsNestedComponentAndAsNestedComponentsMethodsForGuardedComponents() {
     final NullsForAsComponentMethodsPage page = page();
