@@ -91,6 +91,7 @@ limitations under the License.
     <allure.report.version>2.30.0</allure.report.version>
     <allure.version>2.28.1</allure.version>
     <assertj.version>3.26.3</assertj.version>
+    <image.comparison.version>4.4.0</image.comparison.version>
     <junit.version>5.10.3</junit.version>
     <lang3.version>3.15.0</lang3.version>
     <log4j.version>2.23.1</log4j.version>
@@ -150,6 +151,11 @@ limitations under the License.
       <groupId>io.qameta.allure</groupId>
       <artifactId>allure-selenide</artifactId>
       <version>${allure.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.romankh3</groupId>
+      <artifactId>image-comparison</artifactId>
+      <version>${image.comparison.version}</version>
     </dependency>
 
     <!-- Test -->

@@ -20,20 +20,22 @@ package io.github.epadronu.dwalin;
 
 /* ************************************************************************************************/
 import com.codeborne.selenide.SelenideElement;
+import com.github.romankh3.image.comparison.model.ImageComparisonResult;
+import com.github.romankh3.image.comparison.model.ImageComparisonState;
 import io.github.epadronu.dwalin.core.Dwalin;
 import io.github.epadronu.dwalin.core.ElementGuard;
 import io.github.epadronu.dwalin.core.GuardedComponent;
 import io.github.epadronu.dwalin.core.NavigablePage;
 import io.github.epadronu.dwalin.core.Page;
 import io.github.epadronu.dwalin.qa.DwalinWebDriverTest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import io.github.epadronu.dwalin.visual.ImageComparisonHelper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
 import javax.annotation.Nonnull;
+import java.awt.Color;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -45,8 +47,11 @@ import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.page;
 import static com.codeborne.selenide.Selenide.webdriver;
 import static com.codeborne.selenide.WebDriverConditions.title;
+import static com.github.romankh3.image.comparison.ImageComparisonUtil.readImageFromResources;
 import static io.github.epadronu.dwalin.core.Dwalin.attachScreenshotToAllureReport;
 import static io.github.epadronu.dwalin.core.ElementGuard.guard;
+import static io.github.epadronu.dwalin.visual.ReportAttachmentMode.RESULT;
+import static io.github.epadronu.dwalin.visual.SizeMismatchHandlingMode.THROW_EXCEPTION;
 import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 /* ************************************************************************************************/
@@ -58,8 +63,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
  */
 @DisplayName("Sample tests")
 public final class SampleTests extends DwalinWebDriverTest {
-
-  private static final Logger log = LogManager.getLogger(SampleTests.class);
 
   /**
    * Represents the DuckDuckGo home page.
@@ -149,7 +152,7 @@ public final class SampleTests extends DwalinWebDriverTest {
      * @return a list of {@code SearchResult<DuckDuckGoSearchResultPage>} representing the search results
      */
     public List<SearchResult<DuckDuckGoSearchResultPage>> results() {
-      return asComponents($$(resultItem).should(sizeGreaterThanOrEqual(1), ofSeconds(20L)), SearchResult::new);
+      return asComponents($$(resultItem).should(sizeGreaterThanOrEqual(1), ofSeconds(10L)), SearchResult::new);
     }
   }
 
@@ -244,14 +247,17 @@ public final class SampleTests extends DwalinWebDriverTest {
 
   @Test
   void shouldFirstResultBeOraclesAndHaveSiteLinksWhenSearchingForJava() {
+    final ImageComparisonHelper helper = ImageComparisonHelper.builder()
+        .imageComparisonConfigurationContext(config -> config.setDifferenceRectangleColor(Color.BLUE))
+        .sizeMismatchHandlingMode(THROW_EXCEPTION)
+        .reportAttachmentMode(RESULT)
+        .build();
+
     final SearchResult<DuckDuckGoSearchResultPage> firstResult = Dwalin.navigateTo(DuckDuckGoHomePage.class)
         .searchBox()
         .search("java")
         .results()
         .getFirst();
-
-    // Because we can and it may be useful
-    attachScreenshotToAllureReport(firstResult, "First result");
 
     assertSoftly(softly -> {
       softly.assertThat(firstResult.title().text())
@@ -271,6 +277,11 @@ public final class SampleTests extends DwalinWebDriverTest {
       softly.assertThat(siteLink.description().text())
           .describedAs("The text of the 4th site link in the first result did not match the expected value.")
           .startsWith("What is Java technology and why do I need it?");
+
+      softly.assertThat(helper.compare(siteLink, readImageFromResources("images/what-is-java.png")))
+          .describedAs("Visually match the specified base image.")
+          .extracting(ImageComparisonResult::getImageComparisonState)
+          .isEqualTo(ImageComparisonState.MATCH);
     });
   }
 
