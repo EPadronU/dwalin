@@ -35,7 +35,10 @@ learned from Balin into the Java world.
 
 ### Templates
 
-TODO
+The [dwalin-restassured-template](https://github.com/EPadronU/dwalin-restassured-template)
+repository serves as a starting point for creating robust web automation projects in Java. The
+template integrates powerful tools like REST Assured for API testing and the Allure Framework for
+advanced reporting, all seamlessly tied together with the Dwalin library.
 
 
 ## Documentation
