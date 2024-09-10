@@ -54,14 +54,14 @@ advanced reporting, all seamlessly tied together with the Dwalin library.
 <dependency>
     <groupId>io.github.epadronu</groupId>
     <artifactId>dwalin</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'io.github.epadronu:dwalin:0.2.0'
+implementation 'io.github.epadronu:dwalin:0.2.1'
 ```
 
 

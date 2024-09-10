@@ -24,7 +24,7 @@ limitations under the License.
   <!-- Maven Project Coordinates -->
   <groupId>io.github.epadronu</groupId>
   <artifactId>dwalin</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
   
   <!-- Maven Project Information -->
   <name>Dwalin</name>
