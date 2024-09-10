@@ -96,7 +96,7 @@ public final class PascalCaseDisplayNameGenerator implements DisplayNameGenerato
    * @param name the PascalCase or camelCase string to convert; never null
    * @return a human-readable version of the input string; never null
    */
-  private static String pascalAndCamelCaseToHumanFriendly(final String name) {
+  public static String pascalAndCamelCaseToHumanFriendly(final String name) {
     return capitalize(join(" ", splitByCharacterTypeCamelCase(name)).toLowerCase());
   }
 }

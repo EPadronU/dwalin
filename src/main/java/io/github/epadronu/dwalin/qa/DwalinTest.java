@@ -68,7 +68,14 @@ public class DwalinTest {
   @BeforeEach
   @DisplayName("Trace the start of a test method")
   protected void traceTestMethodStart(final TestInfo testInfo) {
-    atomicEntryMessage.set(logger.traceEntry("TEST «{}»", testInfo.getDisplayName()));
+    if (testInfo.getDisplayName().startsWith("[") && testInfo.getTestMethod().isPresent()) {
+      atomicEntryMessage.set(logger.traceEntry(
+          "TEST «{} {}»",
+          PascalCaseDisplayNameGenerator.pascalAndCamelCaseToHumanFriendly(testInfo.getTestMethod().get().getName()),
+          testInfo.getDisplayName()));
+    } else {
+      atomicEntryMessage.set(logger.traceEntry("TEST «{}»", testInfo.getDisplayName()));
+    }
   }
 
   /**

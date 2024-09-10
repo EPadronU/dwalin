@@ -184,7 +184,7 @@ public final class ElementComponentTests extends DwalinWebDriverTest {
     }
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("happy-path")
   void shouldWorkAsExpectedWhenInteractingWithAPageThroughTheUseOfElementComponents() {
     assertThatCode(() -> {
@@ -206,7 +206,7 @@ public final class ElementComponentTests extends DwalinWebDriverTest {
         .doesNotThrowAnyException();
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("happy-path")
   void shouldTheParentsForElementComponentsAndNesterElementComponentsBeSetAsExpected() {
     final var resultPage = open(PAGE_URL, DuckDuckGoHomePage.class)
@@ -228,7 +228,7 @@ public final class ElementComponentTests extends DwalinWebDriverTest {
     });
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("happy-path")
   void shouldTheToStringMethodForElementComponentsWorkAsExpected() {
     final var resultPage = open(PAGE_URL, DuckDuckGoHomePage.class)
@@ -250,7 +250,7 @@ public final class ElementComponentTests extends DwalinWebDriverTest {
     });
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("happy-path")
   void shouldWorkAsExpectedWhenUsingElementComponentsAsSelenideElements() {
     assertThatCode(() -> {
@@ -271,7 +271,7 @@ public final class ElementComponentTests extends DwalinWebDriverTest {
         .doesNotThrowAnyException();
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("sad-path")
   void shouldFailToConstructAElementComponentWithANullPage() {
     assertThatCode(() -> {
@@ -284,7 +284,7 @@ public final class ElementComponentTests extends DwalinWebDriverTest {
         .doesNotThrowAnyExceptionExcept(NullPointerException.class);
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("sad-path")
   void shouldFailToConstructAElementComponentWithANullRootElement() {
     assertThatCode(() -> {
@@ -295,7 +295,7 @@ public final class ElementComponentTests extends DwalinWebDriverTest {
         .doesNotThrowAnyExceptionExcept(NullPointerException.class);
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("sad-path")
   void shouldFailWhenUsingNullsInTheAsComponentAndAsComponentsMethodsForElementComponents() {
     final NullsForAsComponentMethodsPage page = page();
@@ -323,7 +323,7 @@ public final class ElementComponentTests extends DwalinWebDriverTest {
     });
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("sad-path")
   void shouldFailWhenUsingNullsInTheAsNestedComponentAndAsNestedComponentsMethodsForElementComponents() {
     final NullsForAsComponentMethodsPage page = page();

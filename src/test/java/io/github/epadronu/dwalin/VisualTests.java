@@ -79,7 +79,7 @@ public final class VisualTests extends DwalinWebDriverTest {
     $("#q").sendKeys("romankh3 image-comparison", Keys.ENTER);
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("happy-path")
   void shouldImageComparisonWithTheDefaultConfigurationWorkAsExpected() {
     final ImageComparisonHelper helper = ImageComparisonHelper.builder().build();
@@ -92,7 +92,7 @@ public final class VisualTests extends DwalinWebDriverTest {
         .doesNotThrowAnyException();
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("sad-path")
   void shouldImageComparisonWithTheWrongElementFail() {
     final ImageComparisonHelper helper = ImageComparisonHelper.builder()
@@ -109,7 +109,7 @@ public final class VisualTests extends DwalinWebDriverTest {
         .doesNotThrowAnyExceptionExcept(ElementShould.class);
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("happy-path")
   void shouldImageComparisonWithCutoffExpectedImageAndCutAndFitModeWorkAsExpected() {
     final ImageComparisonHelper helper = ImageComparisonHelper.builder()
@@ -124,7 +124,7 @@ public final class VisualTests extends DwalinWebDriverTest {
         .doesNotThrowAnyException();
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("sad-path")
   void shouldImageComparisonWithCutoffExpectedImageAndThrowExceptionModeFailAsExpected() {
     final ImageComparisonHelper helper = ImageComparisonHelper.builder()
@@ -140,7 +140,7 @@ public final class VisualTests extends DwalinWebDriverTest {
         .doesNotThrowAnyExceptionExcept(IllegalArgumentException.class);
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("happy-path")
   void shouldImageComparisonWithNoneAsReportAttachmentModeNotAttachAnImage() {
     final ImageComparisonHelper helper = ImageComparisonHelper.builder()
@@ -164,7 +164,7 @@ public final class VisualTests extends DwalinWebDriverTest {
     });
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   @Tag("happy-path")
   void shouldImageComparisonWithActualExpectedAndResultAsReportAttachmentModeAttachAllImages() {
     final ImageComparisonHelper helper = ImageComparisonHelper.builder()

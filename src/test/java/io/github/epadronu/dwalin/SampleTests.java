@@ -245,7 +245,7 @@ public final class SampleTests extends DwalinWebDriverTest {
     }
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   void shouldFirstResultBeOraclesAndHaveSiteLinksWhenSearchingForJava() {
     final ImageComparisonHelper helper = ImageComparisonHelper.builder()
         .imageComparisonConfigurationContext(config -> config.setDifferenceRectangleColor(Color.BLUE))
@@ -285,7 +285,7 @@ public final class SampleTests extends DwalinWebDriverTest {
     });
   }
 
-  @RetryingTest(maxAttempts = 3, name = "{displayName} [Attempt {index}]")
+  @RetryingTest(maxAttempts = 3, name = "[Attempt {index}]")
   void shouldFirstResultBeTheOfficialOneAndHaveSiteLinksWhenSearchingForSelenium() {
     final SearchResult<DuckDuckGoSearchResultPage> firstResult = Dwalin.navigateTo(DuckDuckGoHomePage.class)
         .searchBox()
